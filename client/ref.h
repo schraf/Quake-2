@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -19,6 +19,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
 #include "../qcommon/qcommon.h"
+
+#ifdef _WIN32
+#ifdef REF_BUILD
+#define REF_API __declspec(dllexport)
+#else
+#define REF_API __declspec(dllimport)
+#endif
+#elif
+#define REF_API
+#endif
 
 #define	MAX_DLIGHTS		32
 #define	MAX_ENTITIES	128

@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
-	
+
 // q_shared.h -- included first by ALL program modules
 
 #ifdef _WIN32
@@ -38,6 +38,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+
+#ifdef _WIN32
+#ifdef GAME_BUILD
+#define GAME_API __declspec(dllexport)
+#else
+#define GAME_API __declspec(dllimport)
+#endif
+#elif
+#define GAME_API
+#endif
 
 #if (defined _M_IX86 || defined __i386__) && !defined C_ONLY && !defined __sun__
 #define id386	1
@@ -99,7 +109,7 @@ typedef enum {false, true}	qboolean;
 
 #define	PRINT_ALL			0
 #define PRINT_DEVELOPER		1		// only print when "developer 1"
-#define PRINT_ALERT			2		
+#define PRINT_ALERT			2
 
 
 // destination class for gi.multicast()
@@ -145,7 +155,7 @@ extern vec3_t vec3_origin;
 // microsoft's fabs seems to be ungodly slow...
 //float Q_fabs (float f);
 //#define	fabs(f) Q_fabs(f)
-#if !defined C_ONLY && !defined __linux__ && !defined __sgi
+#if !defined C_ONLY && !defined __linux__ && !defined __sgi && !defined _M_X64
 extern long Q_ftol( float f );
 #else
 #define Q_ftol( f ) ( long ) (f)
@@ -458,7 +468,7 @@ typedef struct
 
 // pmove_state_t is the information necessary for client side movement
 // prediction
-typedef enum 
+typedef enum
 {
 	// can accelerate and turn
 	PM_NORMAL,
@@ -1180,7 +1190,7 @@ typedef struct
 	int			gunframe;
 
 	float		blend[4];		// rgba full screen effect
-	
+
 	float		fov;			// horizontal field of view
 
 	int			rdflags;		// refdef flags
@@ -1190,7 +1200,7 @@ typedef struct
 
 
 // ==================
-// PGM 
+// PGM
 #define VIDREF_GL		1
 #define VIDREF_SOFT		2
 #define VIDREF_OTHER	3
