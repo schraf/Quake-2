@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -425,8 +425,8 @@ void R_BlendLightmaps (void)
 				for ( drawsurf = newdrawsurf; drawsurf != surf; drawsurf = drawsurf->lightmapchain )
 				{
 					if ( drawsurf->polys )
-						DrawGLPolyChain( drawsurf->polys, 
-							              ( drawsurf->light_s - drawsurf->dlight_s ) * ( 1.0 / 128.0 ), 
+						DrawGLPolyChain( drawsurf->polys,
+							              ( drawsurf->light_s - drawsurf->dlight_s ) * ( 1.0 / 128.0 ),
 										( drawsurf->light_t - drawsurf->dlight_t ) * ( 1.0 / 128.0 ) );
 				}
 
@@ -485,12 +485,12 @@ void R_RenderBrushPoly (msurface_t *fa)
 	image = R_TextureAnimation (fa->texinfo);
 
 	if (fa->flags & SURF_DRAWTURB)
-	{	
+	{
 		GL_Bind( image->texnum );
 
 		// warp texture, no lightmaps
 		GL_TexEnv( GL_MODULATE );
-		qglColor4f( gl_state.inverse_intensity, 
+		qglColor4f( gl_state.inverse_intensity,
 			        gl_state.inverse_intensity,
 					gl_state.inverse_intensity,
 					1.0F );
@@ -553,9 +553,9 @@ dynamic:
 			GL_Bind( gl_state.lightmap_textures + fa->lightmaptexturenum );
 
 			qglTexSubImage2D( GL_TEXTURE_2D, 0,
-							  fa->light_s, fa->light_t, 
-							  smax, tmax, 
-							  GL_LIGHTMAP_FORMAT, 
+							  fa->light_s, fa->light_t,
+							  smax, tmax,
+							  GL_LIGHTMAP_FORMAT,
 							  GL_UNSIGNED_BYTE, temp );
 
 			fa->lightmapchain = gl_lms.lightmap_surfaces[fa->lightmaptexturenum];
@@ -744,9 +744,9 @@ dynamic:
 			lmtex = surf->lightmaptexturenum;
 
 			qglTexSubImage2D( GL_TEXTURE_2D, 0,
-							  surf->light_s, surf->light_t, 
-							  smax, tmax, 
-							  GL_LIGHTMAP_FORMAT, 
+							  surf->light_s, surf->light_t,
+							  smax, tmax,
+							  GL_LIGHTMAP_FORMAT,
 							  GL_UNSIGNED_BYTE, temp );
 
 		}
@@ -762,9 +762,9 @@ dynamic:
 			lmtex = 0;
 
 			qglTexSubImage2D( GL_TEXTURE_2D, 0,
-							  surf->light_s, surf->light_t, 
-							  smax, tmax, 
-							  GL_LIGHTMAP_FORMAT, 
+							  surf->light_s, surf->light_t,
+							  smax, tmax,
+							  GL_LIGHTMAP_FORMAT,
 							  GL_UNSIGNED_BYTE, temp );
 
 		}
@@ -779,7 +779,7 @@ dynamic:
 		if (surf->texinfo->flags & SURF_FLOWING)
 		{
 			float scroll;
-		
+
 			scroll = -64 * ( (r_newrefdef.time / 40.0) - (int)(r_newrefdef.time / 40.0) );
 			if(scroll == 0.0)
 				scroll = -64.0;
@@ -827,7 +827,7 @@ dynamic:
 		if (surf->texinfo->flags & SURF_FLOWING)
 		{
 			float scroll;
-		
+
 			scroll = -64 * ( (r_newrefdef.time / 40.0) - (int)(r_newrefdef.time / 40.0) );
 			if(scroll == 0.0)
 				scroll = -64.0;
@@ -1046,7 +1046,7 @@ void R_RecursiveWorldNode (mnode_t *node)
 		return;
 	if (R_CullBox (node->minmaxs, node->minmaxs+3))
 		return;
-	
+
 // if a leaf node, draw stuff
 	if (node->contents != -1)
 	{
@@ -1226,7 +1226,7 @@ void R_DrawWorld (void)
 
 		if ( gl_lightmap->value )
 			GL_TexEnv( GL_REPLACE );
-		else 
+		else
 			GL_TexEnv( GL_MODULATE );
 
 		R_RecursiveWorldNode (r_worldmodel->nodes);
@@ -1244,7 +1244,7 @@ void R_DrawWorld (void)
 	*/
 	DrawTextureChains ();
 	R_BlendLightmaps ();
-	
+
 	R_DrawSkyBox ();
 
 	R_DrawTriangleOutlines ();
@@ -1301,7 +1301,7 @@ void R_MarkLeaves (void)
 			((int *)fatvis)[i] |= ((int *)vis)[i];
 		vis = fatvis;
 	}
-	
+
 	for (i=0,leaf=r_worldmodel->leafs ; i<r_worldmodel->numleafs ; i++, leaf++)
 	{
 		cluster = leaf->cluster;
@@ -1381,7 +1381,7 @@ static void LM_UploadBlock( qboolean dynamic )
 				height = gl_lms.allocated[i];
 		}
 
-		qglTexSubImage2D( GL_TEXTURE_2D, 
+		qglTexSubImage2D( GL_TEXTURE_2D,
 						  0,
 						  0, 0,
 						  BLOCK_WIDTH, height,
@@ -1391,13 +1391,13 @@ static void LM_UploadBlock( qboolean dynamic )
 	}
 	else
 	{
-		qglTexImage2D( GL_TEXTURE_2D, 
-					   0, 
+		qglTexImage2D( GL_TEXTURE_2D,
+					   0,
 					   gl_lms.internal_format,
-					   BLOCK_WIDTH, BLOCK_HEIGHT, 
-					   0, 
-					   GL_LIGHTMAP_FORMAT, 
-					   GL_UNSIGNED_BYTE, 
+					   BLOCK_WIDTH, BLOCK_HEIGHT,
+					   0,
+					   GL_LIGHTMAP_FORMAT,
+					   GL_UNSIGNED_BYTE,
 					   gl_lms.lightmap_buffer );
 		if ( ++gl_lms.current_lightmap_texture == MAX_LIGHTMAPS )
 			ri.Sys_Error( ERR_DROP, "LM_UploadBlock() - MAX_LIGHTMAPS exceeded\n" );
@@ -1565,6 +1565,8 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	int				i;
 	unsigned		dummy[128*128];
 
+	(void)m;
+
 	memset( gl_lms.allocated, 0, sizeof(gl_lms.allocated) );
 
 	r_framecount = 1;		// no dlightcache
@@ -1598,7 +1600,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	** if mono lightmaps are enabled and we want to use alpha
 	** blending (a,1-a) then we're likely running on a 3DLabs
 	** Permedia2.  In a perfect world we'd use a GL_ALPHA lightmap
-	** in order to conserve space and maximize bandwidth, however 
+	** in order to conserve space and maximize bandwidth, however
 	** this isn't a perfect world.
 	**
 	** So we have to use alpha lightmaps, but stored in GL_RGBA format,
@@ -1622,7 +1624,7 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	{
 		gl_lms.internal_format = GL_INTENSITY8;
 	}
-	else if ( toupper( gl_monolightmap->string[0] ) == 'L' ) 
+	else if ( toupper( gl_monolightmap->string[0] ) == 'L' )
 	{
 		gl_lms.internal_format = GL_LUMINANCE8;
 	}
@@ -1637,13 +1639,13 @@ void GL_BeginBuildingLightmaps (model_t *m)
 	GL_Bind( gl_state.lightmap_textures + 0 );
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	qglTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	qglTexImage2D( GL_TEXTURE_2D, 
-				   0, 
+	qglTexImage2D( GL_TEXTURE_2D,
+				   0,
 				   gl_lms.internal_format,
-				   BLOCK_WIDTH, BLOCK_HEIGHT, 
-				   0, 
-				   GL_LIGHTMAP_FORMAT, 
-				   GL_UNSIGNED_BYTE, 
+				   BLOCK_WIDTH, BLOCK_HEIGHT,
+				   0,
+				   GL_LIGHTMAP_FORMAT,
+				   GL_UNSIGNED_BYTE,
 				   dummy );
 }
 

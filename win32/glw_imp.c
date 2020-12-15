@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -48,7 +48,7 @@ static qboolean VerifyDriver( void )
 {
 	char buffer[1024];
 
-	strcpy( buffer, qglGetString( GL_RENDERER ) );
+	strcpy( buffer, (const char*)qglGetString( GL_RENDERER ) );
 	strlwr( buffer );
 	if ( strcmp( buffer, "gdi generic" ) == 0 )
 		if ( !glw_state.mcd_accelerated )
@@ -120,7 +120,7 @@ qboolean VID_CreateWindow( int width, int height, qboolean fullscreen )
 	}
 
 	glw_state.hWnd = CreateWindowEx (
-		 exstyle, 
+		 exstyle,
 		 WINDOW_CLASS_NAME,
 		 "Quake 2",
 		 stylebits,
@@ -132,7 +132,7 @@ qboolean VID_CreateWindow( int width, int height, qboolean fullscreen )
 
 	if (!glw_state.hWnd)
 		ri.Sys_Error (ERR_FATAL, "Couldn't create window");
-	
+
 	ShowWindow( glw_state.hWnd, SW_SHOW );
 	UpdateWindow( glw_state.hWnd );
 
@@ -246,7 +246,7 @@ rserr_t GLimp_SetMode( int *pwidth, int *pheight, int mode, qboolean fullscreen 
 
 			/*
 			** our first CDS failed, so maybe we're running on some weird dual monitor
-			** system 
+			** system
 			*/
 			if ( ChangeDisplaySettings( &dm, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
 			{
@@ -352,35 +352,7 @@ qboolean GLimp_Init( void *hinstance, void *wndproc )
 
 	vinfo.dwOSVersionInfoSize = sizeof(vinfo);
 
-	glw_state.allowdisplaydepthchange = false;
-
-	if ( GetVersionEx( &vinfo) )
-	{
-		if ( vinfo.dwMajorVersion > 4 )
-		{
-			glw_state.allowdisplaydepthchange = true;
-		}
-		else if ( vinfo.dwMajorVersion == 4 )
-		{
-			if ( vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT )
-			{
-				glw_state.allowdisplaydepthchange = true;
-			}
-			else if ( vinfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS )
-			{
-				if ( LOWORD( vinfo.dwBuildNumber ) >= OSR2_BUILD_NUMBER )
-				{
-					glw_state.allowdisplaydepthchange = true;
-				}
-			}
-		}
-	}
-	else
-	{
-		ri.Con_Printf( PRINT_ALL, "GLimp_Init() - GetVersionEx failed\n" );
-		return false;
-	}
-
+	glw_state.allowdisplaydepthchange = true;
 	glw_state.hInstance = ( HINSTANCE ) hinstance;
 	glw_state.wndproc = wndproc;
 
@@ -389,7 +361,7 @@ qboolean GLimp_Init( void *hinstance, void *wndproc )
 
 qboolean GLimp_InitGL (void)
 {
-    PIXELFORMATDESCRIPTOR pfd = 
+    PIXELFORMATDESCRIPTOR pfd =
 	{
 		sizeof(PIXELFORMATDESCRIPTOR),	// size of this pfd
 		1,								// version number
@@ -403,7 +375,7 @@ qboolean GLimp_InitGL (void)
 		0,								// shift bit ignored
 		0,								// no accumulation buffer
 		0, 0, 0, 0, 					// accum bits ignored
-		32,								// 32-bit z-buffer	
+		32,								// 32-bit z-buffer
 		0,								// no stencil buffer
 		0,								// no auxiliary buffer
 		PFD_MAIN_PLANE,					// main layer
@@ -412,7 +384,7 @@ qboolean GLimp_InitGL (void)
     };
     int  pixelformat;
 	cvar_t *stereo;
-	
+
 	stereo = ri.Cvar_Get( "cl_stereo", "0", 0 );
 
 	/*
@@ -495,7 +467,7 @@ qboolean GLimp_InitGL (void)
 	/*
 	** report if stereo is desired but unavailable
 	*/
-	if ( !( pfd.dwFlags & PFD_STEREO ) && ( stereo->value != 0 ) ) 
+	if ( !( pfd.dwFlags & PFD_STEREO ) && ( stereo->value != 0 ) )
 	{
 		ri.Con_Printf( PRINT_ALL, "...failed to select stereo pixel format\n" );
 		ri.Cvar_SetValue( "cl_stereo", 0 );
@@ -527,7 +499,7 @@ qboolean GLimp_InitGL (void)
 	}
 
 	/*
-	** print out PFD specifics 
+	** print out PFD specifics
 	*/
 	ri.Con_Printf( PRINT_ALL, "GL PFD: color(%d-bits) Z(%d-bit)\n", ( int ) pfd.cColorBits, ( int ) pfd.cDepthBits );
 
@@ -579,7 +551,7 @@ void GLimp_BeginFrame( float camera_separation )
 
 /*
 ** GLimp_EndFrame
-** 
+**
 ** Responsible for doing a swapbuffers and possibly for other stuff
 ** as yet to be determined.  Probably better not to make this a GLimp
 ** function and instead do a call to GLimp_SwapBuffers.

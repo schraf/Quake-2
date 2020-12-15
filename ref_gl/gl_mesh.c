@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -64,7 +64,7 @@ void GL_LerpVerts( int nverts, dtrivertx_t *v, dtrivertx_t *ov, dtrivertx_t *ver
 
 			lerp[0] = move[0] + ov->v[0]*backv[0] + v->v[0]*frontv[0] + normal[0] * POWERSUIT_SCALE;
 			lerp[1] = move[1] + ov->v[1]*backv[1] + v->v[1]*frontv[1] + normal[1] * POWERSUIT_SCALE;
-			lerp[2] = move[2] + ov->v[2]*backv[2] + v->v[2]*frontv[2] + normal[2] * POWERSUIT_SCALE; 
+			lerp[2] = move[2] + ov->v[2]*backv[2] + v->v[2]*frontv[2] + normal[2] * POWERSUIT_SCALE;
 		}
 	}
 	else
@@ -102,11 +102,11 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 	int		index_xyz;
 	float	*lerp;
 
-	frame = (daliasframe_t *)((byte *)paliashdr + paliashdr->ofs_frames 
+	frame = (daliasframe_t *)((byte *)paliashdr + paliashdr->ofs_frames
 		+ currententity->frame * paliashdr->framesize);
 	verts = v = frame->verts;
 
-	oldframe = (daliasframe_t *)((byte *)paliashdr + paliashdr->ofs_frames 
+	oldframe = (daliasframe_t *)((byte *)paliashdr + paliashdr->ofs_frames
 		+ currententity->oldframe * paliashdr->framesize);
 	ov = oldframe->verts;
 
@@ -174,7 +174,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 			//
 			for ( i = 0; i < paliashdr->num_xyz; i++ )
 			{
-				float l = shadedots[verts[i].lightnormalindex];
+				l = shadedots[verts[i].lightnormalindex];
 
 				colorArray[i*3+0] = l * shadelight[0];
 				colorArray[i*3+1] = l * shadelight[1];
@@ -225,7 +225,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 
 					// normals and vertexes come from the frame list
 //					l = shadedots[verts[index_xyz].lightnormalindex];
-					
+
 //					qglColor4f (l* shadelight[0], l*shadelight[1], l*shadelight[2], alpha);
 					qglArrayElement( index_xyz );
 
@@ -278,7 +278,7 @@ void GL_DrawAliasFrameLerp (dmdl_t *paliashdr, float backlerp)
 
 					// normals and vertexes come from the frame list
 					l = shadedots[verts[index_xyz].lightnormalindex];
-					
+
 					qglColor4f (l* shadelight[0], l*shadelight[1], l*shadelight[2], alpha);
 					qglVertex3fv (s_lerped[index_xyz]);
 				} while (--count);
@@ -312,9 +312,11 @@ void GL_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
 	int		count;
 	daliasframe_t	*frame;
 
+	(void)posenum; // needed?
+
 	lheight = currententity->origin[2] - lightspot[2];
 
-	frame = (daliasframe_t *)((byte *)paliashdr + paliashdr->ofs_frames 
+	frame = (daliasframe_t *)((byte *)paliashdr + paliashdr->ofs_frames
 		+ currententity->frame * paliashdr->framesize);
 	verts = frame->verts;
 
@@ -362,7 +364,7 @@ void GL_DrawAliasShadow (dmdl_t *paliashdr, int posenum)
 		} while (--count);
 
 		qglEnd ();
-	}	
+	}
 }
 
 #endif
@@ -384,22 +386,22 @@ static qboolean R_CullAliasModel( vec3_t bbox[8], entity_t *e )
 
 	if ( ( e->frame >= paliashdr->num_frames ) || ( e->frame < 0 ) )
 	{
-		ri.Con_Printf (PRINT_ALL, "R_CullAliasModel %s: no such frame %d\n", 
+		ri.Con_Printf (PRINT_ALL, "R_CullAliasModel %s: no such frame %d\n",
 			currentmodel->name, e->frame);
 		e->frame = 0;
 	}
 	if ( ( e->oldframe >= paliashdr->num_frames ) || ( e->oldframe < 0 ) )
 	{
-		ri.Con_Printf (PRINT_ALL, "R_CullAliasModel %s: no such oldframe %d\n", 
+		ri.Con_Printf (PRINT_ALL, "R_CullAliasModel %s: no such oldframe %d\n",
 			currentmodel->name, e->oldframe);
 		e->oldframe = 0;
 	}
 
-	pframe = ( daliasframe_t * ) ( ( byte * ) paliashdr + 
+	pframe = ( daliasframe_t * ) ( ( byte * ) paliashdr +
 		                              paliashdr->ofs_frames +
 									  e->frame * paliashdr->framesize);
 
-	poldframe = ( daliasframe_t * ) ( ( byte * ) paliashdr + 
+	poldframe = ( daliasframe_t * ) ( ( byte * ) paliashdr +
 		                              paliashdr->ofs_frames +
 									  e->oldframe * paliashdr->framesize);
 
@@ -509,6 +511,8 @@ static qboolean R_CullAliasModel( vec3_t bbox[8], entity_t *e )
 		return false;
 	}
 }
+
+extern void MYgluPerspective( GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar );
 
 /*
 =================
@@ -638,7 +642,7 @@ void R_DrawAliasModel (entity_t *e)
 			}
 
 		}
-		
+
 		if ( gl_monolightmap->string[0] != '0' )
 		{
 			float s = shadelight[0];
@@ -690,11 +694,11 @@ void R_DrawAliasModel (entity_t *e)
 		shadelight[1] = 0.0;
 		shadelight[2] = 0.0;
 	}
-// PGM	
+// PGM
 // =================
 
 	shadedots = r_avertexnormal_dots[((int)(currententity->angles[1] * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
-	
+
 	an = currententity->angles[1]/180*M_PI;
 	shadevector[0] = cos(-an);
 	shadevector[1] = sin(-an);
@@ -715,8 +719,6 @@ void R_DrawAliasModel (entity_t *e)
 
 	if ( ( currententity->flags & RF_WEAPONMODEL ) && ( r_lefthand->value == 1.0F ) )
 	{
-		extern void MYgluPerspective( GLdouble fovy, GLdouble aspect, GLdouble zNear, GLdouble zFar );
-
 		qglMatrixMode( GL_PROJECTION );
 		qglPushMatrix();
 		qglLoadIdentity();
@@ -761,7 +763,7 @@ void R_DrawAliasModel (entity_t *e)
 	}
 
 
-	if ( (currententity->frame >= paliashdr->num_frames) 
+	if ( (currententity->frame >= paliashdr->num_frames)
 		|| (currententity->frame < 0) )
 	{
 		ri.Con_Printf (PRINT_ALL, "R_DrawAliasModel %s: no such frame %d\n",
