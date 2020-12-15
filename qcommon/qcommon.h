@@ -604,7 +604,7 @@ extern	byte		net_message_buffer[MAX_MSGLEN];
 
 
 void Netchan_Init (void);
-void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t adr, int qport);
+void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t adr, int port);
 
 qboolean Netchan_NeedReliable (netchan_t *chan);
 void Netchan_Transmit (netchan_t *chan, int length, byte *data);
@@ -736,7 +736,7 @@ MISC
 #define	PRINT_ALL		0
 #define PRINT_DEVELOPER	1	// only print when "developer 1"
 
-void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush));
+void		Com_BeginRedirect (int target, char *buffer, int buffersize, void (*flush)(int, char*));
 void		Com_EndRedirect (void);
 void 		Com_Printf (char *fmt, ...);
 void 		Com_DPrintf (char *fmt, ...);
@@ -749,8 +749,10 @@ void		Com_SetServerState (int state);
 unsigned	Com_BlockChecksum (void *buffer, int length);
 byte		COM_BlockSequenceCRCByte (byte *base, int length, int sequence);
 
-float	frand(void);	// 0 ti 1
-float	crand(void);	// -1 to 1
+float	frand (void);	// 0 ti 1
+float	crand (void);	// -1 to 1
+
+int		Q_strlen (const char* str);
 
 extern	cvar_t	*developer;
 extern	cvar_t	*dedicated;

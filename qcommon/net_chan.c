@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -114,7 +114,7 @@ void Netchan_OutOfBand (int net_socket, netadr_t adr, int length, byte *data)
 
 // write the packet header
 	SZ_Init (&send, send_buf, sizeof(send_buf));
-	
+
 	MSG_WriteLong (&send, -1);	// -1 sequence means out of band
 	SZ_Write (&send, data, length);
 
@@ -133,12 +133,12 @@ void Netchan_OutOfBandPrint (int net_socket, netadr_t adr, char *format, ...)
 {
 	va_list		argptr;
 	static char		string[MAX_MSGLEN - 4];
-	
+
 	va_start (argptr, format);
 	vsprintf (string, format,argptr);
 	va_end (argptr);
 
-	Netchan_OutOfBand (net_socket, adr, strlen(string), (byte *)string);
+	Netchan_OutOfBand (net_socket, adr, Q_strlen(string), (byte *)string);
 }
 
 
@@ -149,13 +149,13 @@ Netchan_Setup
 called to open a channel to a remote system
 ==============
 */
-void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t adr, int qport)
+void Netchan_Setup (netsrc_t sock, netchan_t *chan, netadr_t adr, int port)
 {
 	memset (chan, 0, sizeof(*chan));
-	
+
 	chan->sock = sock;
 	chan->remote_address = adr;
-	chan->qport = qport;
+	chan->qport = port;
 	chan->last_received = curtime;
 	chan->incoming_sequence = 0;
 	chan->outgoing_sequence = 1;
@@ -259,7 +259,7 @@ void Netchan_Transmit (netchan_t *chan, int length, byte *data)
 		SZ_Write (&send, chan->reliable_buf, chan->reliable_length);
 		chan->last_reliable_sequence = chan->outgoing_sequence;
 	}
-	
+
 // add the unreliable part if space is available
 	if (send.maxsize - send.cursize >= length)
 		SZ_Write (&send, data, length);
@@ -298,23 +298,23 @@ modifies net_message so that it points to the packet payload
 qboolean Netchan_Process (netchan_t *chan, sizebuf_t *msg)
 {
 	unsigned	sequence, sequence_ack;
-	unsigned	reliable_ack, reliable_message;
-	int			qport;
+	unsigned	reliable_message;
+	int			reliable_ack, port;
 
-// get sequence numbers		
+// get sequence numbers
 	MSG_BeginReading (msg);
 	sequence = MSG_ReadLong (msg);
 	sequence_ack = MSG_ReadLong (msg);
 
 	// read the qport if we are a server
 	if (chan->sock == NS_SERVER)
-		qport = MSG_ReadShort (msg);
+		port = MSG_ReadShort (msg);
 
 	reliable_message = sequence >> 31;
 	reliable_ack = sequence_ack >> 31;
 
 	sequence &= ~(1<<31);
-	sequence_ack &= ~(1<<31);	
+	sequence_ack &= ~(1<<31);
 
 	if (showpackets->value)
 	{
@@ -365,9 +365,9 @@ qboolean Netchan_Process (netchan_t *chan, sizebuf_t *msg)
 //
 	if (reliable_ack == chan->reliable_sequence)
 		chan->reliable_length = 0;	// it has been received
-	
+
 //
-// if this message contains a reliable message, bump incoming_reliable_sequence 
+// if this message contains a reliable message, bump incoming_reliable_sequence
 //
 	chan->incoming_sequence = sequence;
 	chan->incoming_acknowledged = sequence_ack;
