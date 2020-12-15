@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -43,16 +43,16 @@ void S_WriteLinearBlastStereo16 (void)
 		val = snd_p[i]>>8;
 		if (val > 0x7fff)
 			snd_out[i] = 0x7fff;
-		else if (val < (short)0x8000)
-			snd_out[i] = (short)0x8000;
+		else if (val < 0x8000)
+			snd_out[i] = 0x8000;
 		else
 			snd_out[i] = val;
 
 		val = snd_p[i+1]>>8;
 		if (val > 0x7fff)
 			snd_out[i+1] = 0x7fff;
-		else if (val < (short)0x8000)
-			snd_out[i+1] = (short)0x8000;
+		else if (val < 0x8000)
+			snd_out[i+1] = 0x8000;
 		else
 			snd_out[i+1] = val;
 	}
@@ -109,7 +109,7 @@ void S_TransferStereo16 (unsigned long *pbuf, int endtime)
 {
 	int		lpos;
 	int		lpaintedtime;
-	
+
 	snd_p = (int *) paintbuffer;
 	lpaintedtime = paintedtime;
 
@@ -155,7 +155,6 @@ void S_TransferPaintBuffer(int endtime)
 	if (s_testsound->value)
 	{
 		int		i;
-		int		count;
 
 		// write a fixed sine wave
 		count = (endtime - paintedtime);
@@ -172,7 +171,7 @@ void S_TransferPaintBuffer(int endtime)
 	{	// general case
 		p = (int *) paintbuffer;
 		count = (endtime - paintedtime) * dma.channels;
-		out_mask = dma.samples - 1; 
+		out_mask = dma.samples - 1;
 		out_idx = paintedtime * dma.channels & out_mask;
 		step = 3 - dma.channels;
 
@@ -185,8 +184,8 @@ void S_TransferPaintBuffer(int endtime)
 				p+= step;
 				if (val > 0x7fff)
 					val = 0x7fff;
-				else if (val < (short)0x8000)
-					val = (short)0x8000;
+				else if (val < 0x8000)
+					val = 0x8000;
 				out[out_idx] = val;
 				out_idx = (out_idx + 1) & out_mask;
 			}
@@ -200,8 +199,8 @@ void S_TransferPaintBuffer(int endtime)
 				p+= step;
 				if (val > 0x7fff)
 					val = 0x7fff;
-				else if (val < (short)0x8000)
-					val = (short)0x8000;
+				else if (val < 0x8000)
+					val = 0x8000;
 				out[out_idx] = (val>>8) + 128;
 				out_idx = (out_idx + 1) & out_mask;
 			}
@@ -292,7 +291,7 @@ void S_PaintChannels(int endtime)
 		for (i=0; i<MAX_CHANNELS ; i++, ch++)
 		{
 			ltime = paintedtime;
-		
+
 			while (ltime < end)
 			{
 				if (!ch->sfx || (!ch->leftvol && !ch->rightvol) )
@@ -304,18 +303,18 @@ void S_PaintChannels(int endtime)
 				// might be stopped by running out of data
 				if (ch->end - ltime < count)
 					count = ch->end - ltime;
-		
+
 				sc = S_LoadSound (ch->sfx);
 				if (!sc)
 					break;
 
 				if (count > 0 && ch->sfx)
-				{	
+				{
 					if (sc->width == 1)// FIXME; 8 bit asm is wrong now
 						S_PaintChannelFrom8(ch, sc, count,  ltime - paintedtime);
 					else
 						S_PaintChannelFrom16(ch, sc, count, ltime - paintedtime);
-	
+
 					ltime += count;
 				}
 
@@ -332,13 +331,13 @@ void S_PaintChannels(int endtime)
 						ch->pos = sc->loopstart;
 						ch->end = ltime + sc->length - ch->pos;
 					}
-					else				
+					else
 					{	// channel just stopped
 						ch->sfx = NULL;
 					}
 				}
 			}
-															  
+
 		}
 
 	// transfer out according to DMA format
@@ -377,10 +376,10 @@ void S_PaintChannelFrom8 (channel_t *ch, sfxcache_t *sc, int count, int offset)
 		ch->leftvol = 255;
 	if (ch->rightvol > 255)
 		ch->rightvol = 255;
-		
+
 	lscale = snd_scaletable[ ch->leftvol >> 11];
 	rscale = snd_scaletable[ ch->rightvol >> 11];
-	sfx = (signed char *)sc->data + ch->pos;
+	sfx = (unsigned char *)sc->data + ch->pos;
 
 	samp = &paintbuffer[offset];
 
@@ -390,7 +389,7 @@ void S_PaintChannelFrom8 (channel_t *ch, sfxcache_t *sc, int count, int offset)
 		samp->left += lscale[data];
 		samp->right += rscale[data];
 	}
-	
+
 	ch->pos += count;
 }
 

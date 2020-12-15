@@ -800,24 +800,24 @@ Allow embedded \n in the string
 */
 void SizeHUDString (char *string, int *w, int *h)
 {
-	int		lines, width, current;
+	int		lines, width, linewidth;
 
 	lines = 1;
 	width = 0;
+	linewidth = 0;
 
-	current = 0;
 	while (*string)
 	{
 		if (*string == '\n')
 		{
 			lines++;
-			current = 0;
+			linewidth = 0;
 		}
 		else
 		{
-			current++;
-			if (current > width)
-				width = current;
+			linewidth++;
+			if (linewidth > width)
+				width = linewidth;
 		}
 		string++;
 	}
@@ -884,7 +884,7 @@ void SCR_DrawField (int x, int y, int color, int width, int value)
 	SCR_AddDirtyPoint (x+width*CHAR_WIDTH+2, y+23);
 
 	Com_sprintf (num, sizeof(num), "%i", value);
-	l = strlen(num);
+	l = Q_strlen(num);
 	if (l > width)
 		l = width;
 	x += 2 + CHAR_WIDTH*(width - l);

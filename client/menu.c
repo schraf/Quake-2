@@ -512,16 +512,19 @@ static void Multiplayer_MenuDraw (void)
 
 static void PlayerSetupFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_PlayerConfig_f();
 }
 
 static void JoinNetworkServerFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_JoinServer_f();
 }
 
 static void StartNetworkServerFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_StartServer_f ();
 }
 
@@ -643,7 +646,7 @@ static void M_UnbindCommand (char *command)
 	int		l;
 	char	*b;
 
-	l = strlen(command);
+	l = Q_strlen (command);
 
 	for (j=0 ; j<256 ; j++)
 	{
@@ -663,7 +666,7 @@ static void M_FindKeysForCommand (char *command, int *twokeys)
 	char	*b;
 
 	twokeys[0] = twokeys[1] = -1;
-	l = strlen(command);
+	l = Q_strlen (command);
 	count = 0;
 
 	for (j=0 ; j<256 ; j++)
@@ -709,7 +712,7 @@ static void DrawKeyBindingFunc( void *self )
 
 		Menu_DrawString( a->generic.x + a->generic.parent->x + 16, a->generic.y + a->generic.parent->y, name );
 
-		x = strlen(name) * 8;
+		x = Q_strlen (name) * 8;
 
 		if (keys[1] != -1)
 		{
@@ -1035,36 +1038,43 @@ static menulist_s		s_options_console_action;
 
 static void CrosshairFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "crosshair", s_options_crosshair_box.curvalue );
 }
 
 static void JoystickFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "in_joystick", s_options_joystick_box.curvalue );
 }
 
 static void CustomizeControlsFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_Keys_f();
 }
 
 static void AlwaysRunFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "cl_run", s_options_alwaysrun_box.curvalue );
 }
 
 static void FreeLookFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "freelook", s_options_freelook_box.curvalue );
 }
 
 static void MouseSpeedFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "sensitivity", s_options_sensitivity_slider.curvalue / 2.0F );
 }
 
 static void NoAltTabFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "win_noalttab", s_options_noalttab_box.curvalue );
 }
 
@@ -1107,6 +1117,7 @@ static void ControlsSetMenuItemValues( void )
 
 static void ControlsResetDefaultsFunc( void *unused )
 {
+	(void)unused;
 	Cbuf_AddText ("exec default.cfg\n");
 	Cbuf_Execute();
 
@@ -1115,6 +1126,7 @@ static void ControlsResetDefaultsFunc( void *unused )
 
 static void InvertMouseFunc( void *unused )
 {
+	(void)unused;
 	if ( s_options_invertmouse_box.curvalue == 0 )
 	{
 		Cvar_SetValue( "m_pitch", fabs( m_pitch->value ) );
@@ -1127,30 +1139,37 @@ static void InvertMouseFunc( void *unused )
 
 static void LookspringFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "lookspring", s_options_lookspring_box.curvalue );
 }
 
 static void LookstrafeFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "lookstrafe", s_options_lookstrafe_box.curvalue );
 }
 
 static void UpdateVolumeFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "s_volume", s_options_sfxvolume_slider.curvalue / 10 );
 }
 
 static void UpdateCDVolumeFunc( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "cd_nocd", !s_options_cdvolume_box.curvalue );
 }
 
+
+/*
+** the proper way to do this is probably to have ToggleConsole_f accept a parameter
+*/
+extern void Key_ClearTyping( void );
+
 static void ConsoleFunc( void *unused )
 {
-	/*
-	** the proper way to do this is probably to have ToggleConsole_f accept a parameter
-	*/
-	extern void Key_ClearTyping( void );
+	(void)unused;
 
 	if ( cl.attractloop )
 	{
@@ -1167,6 +1186,8 @@ static void ConsoleFunc( void *unused )
 
 static void UpdateSoundQualityFunc( void *unused )
 {
+	(void)unused;
+
 	if ( s_options_quality_list.curvalue )
 	{
 		Cvar_SetValue( "s_khz", 22 );
@@ -1788,7 +1809,7 @@ void M_Credits_MenuDraw( void )
 		{
 			int x;
 
-			x = ( viddef.width - strlen( credits[i] ) * 8 - stringoffset * 8 ) / 2 + ( j + stringoffset ) * 8;
+			x = ( viddef.width - Q_strlen( credits[i] ) * 8 - stringoffset * 8 ) / 2 + ( j + stringoffset ) * 8;
 
 			if ( bold )
 				re.DrawChar( x, y, credits[i][j+stringoffset] + 128 );
@@ -1904,36 +1925,42 @@ static void StartGame( void )
 	cls.key_dest = key_game;
 }
 
-static void EasyGameFunc( void *data )
+static void EasyGameFunc( void *unused )
 {
+	(void)unused;
 	Cvar_ForceSet( "skill", "0" );
 	StartGame();
 }
 
-static void MediumGameFunc( void *data )
+static void MediumGameFunc( void *unused )
 {
+	(void)unused;
 	Cvar_ForceSet( "skill", "1" );
 	StartGame();
 }
 
-static void HardGameFunc( void *data )
+static void HardGameFunc( void *unused )
 {
+	(void)unused;
 	Cvar_ForceSet( "skill", "2" );
 	StartGame();
 }
 
 static void LoadGameFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_LoadGame_f ();
 }
 
 static void SaveGameFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_SaveGame_f();
 }
 
 static void CreditsFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_Credits_f();
 }
 
@@ -2265,13 +2292,15 @@ void JoinServerFunc( void *self )
 	M_ForceMenuOff ();
 }
 
-void AddressBookFunc( void *self )
+void AddressBookFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_AddressBook_f();
 }
 
-void NullCursorDraw( void *self )
+void NullCursorDraw( void *unused )
 {
+	(void)unused;
 }
 
 void SearchLocalGames( void )
@@ -2294,8 +2323,9 @@ void SearchLocalGames( void )
 	CL_PingServers_f();
 }
 
-void SearchLocalGamesFunc( void *self )
+void SearchLocalGamesFunc( void *unused )
 {
+	(void)unused;
 	SearchLocalGames();
 }
 
@@ -2389,15 +2419,18 @@ static menufield_s	s_hostname_field;
 static menulist_s	s_startmap_list;
 static menulist_s	s_rules_box;
 
-void DMOptionsFunc( void *self )
+void DMOptionsFunc( void *unused )
 {
+	(void)unused;
 	if (s_rules_box.curvalue == 1)
 		return;
 	M_Menu_DMOptions_f();
 }
 
-void RulesChangeFunc ( void *self )
+void RulesChangeFunc ( void *unused )
 {
+	(void)unused;
+
 	// DM
 	if (s_rules_box.curvalue == 0)
 	{
@@ -2433,13 +2466,15 @@ void RulesChangeFunc ( void *self )
 //=====
 }
 
-void StartServerActionFunc( void *self )
+void StartServerActionFunc( void *unused )
 {
 	char	startmap[1024];
 	int		timelimit;
 	int		fraglimit;
 	int		maxclients;
 	char	*spot;
+
+	(void)unused;
 
 	strcpy( startmap, strchr( mapnames[s_startmap_list.curvalue], '\n' ) + 1 );
 
@@ -2579,13 +2614,13 @@ void StartServer_MenuInit( void )
 		int		j, l;
 
 		strcpy( shortname, COM_Parse( &s ) );
-		l = strlen(shortname);
+		l = Q_strlen(shortname);
 		for (j=0 ; j<l ; j++)
 			shortname[j] = toupper(shortname[j]);
 		strcpy( longname, COM_Parse( &s ) );
 		Com_sprintf( scratch, sizeof( scratch ), "%s\n%s", longname, shortname );
 
-		mapnames[i] = malloc( strlen( scratch ) + 1 );
+		mapnames[i] = malloc( Q_strlen( scratch ) + 1 );
 		strcpy( mapnames[i], scratch );
 	}
 	mapnames[nummaps] = 0;
@@ -3384,24 +3419,30 @@ static int rate_tbl[] = { 2500, 3200, 5000, 10000, 25000, 0 };
 static const char *rate_names[] = { "28.8 Modem", "33.6 Modem", "Single ISDN",
 	"Dual ISDN/Cable", "T1/LAN", "User defined", 0 };
 
-void DownloadOptionsFunc( void *self )
+void DownloadOptionsFunc( void *unused )
 {
+	(void)unused;
 	M_Menu_DownloadOptions_f();
 }
 
 static void HandednessCallback( void *unused )
 {
+	(void)unused;
 	Cvar_SetValue( "hand", s_player_handedness_box.curvalue );
 }
 
 static void RateCallback( void *unused )
 {
+	(void)unused;
+
 	if (s_player_rate_box.curvalue != sizeof(rate_tbl) / sizeof(*rate_tbl) - 1)
 		Cvar_SetValue( "rate", rate_tbl[s_player_rate_box.curvalue] );
 }
 
 static void ModelCallback( void *unused )
 {
+	(void)unused;
+
 	s_player_skin_box.itemnames = s_pmi[s_player_model_box.curvalue].skindisplaynames;
 	s_player_skin_box.curvalue = 0;
 }
@@ -3439,6 +3480,8 @@ static qboolean IconOfSkinExists( char *skin, char **pcxfiles, int npcxfiles )
 	return false;
 }
 
+extern char **FS_ListFiles( char *, int *, unsigned, unsigned );
+
 static qboolean PlayerConfig_ScanDirectories( void )
 {
 	char findname[1024];
@@ -3447,8 +3490,6 @@ static qboolean PlayerConfig_ScanDirectories( void )
 	char **dirnames;
 	char *path = NULL;
 	int i;
-
-	extern char **FS_ListFiles( char *, int *, unsigned, unsigned );
 
 	s_numplayermodels = 0;
 
@@ -3530,8 +3571,6 @@ static qboolean PlayerConfig_ScanDirectories( void )
 		// copy the valid skins
 		for ( s = 0, k = 0; k < npcxfiles-1; k++ )
 		{
-			char *a, *b, *c;
-
 			if ( !strstr( pcxnames[k], "_i.pcx" ) )
 			{
 				if ( IconOfSkinExists( pcxnames[k], pcxnames, npcxfiles - 1 ) )
@@ -3680,7 +3719,7 @@ qboolean PlayerConfig_MenuInit( void )
 	s_player_name_field.length	= 20;
 	s_player_name_field.visible_length = 20;
 	strcpy( s_player_name_field.buffer, name->string );
-	s_player_name_field.cursor = strlen( name->string );
+	s_player_name_field.cursor = Q_strlen( name->string );
 
 	s_player_model_title.generic.type = MTYPE_SEPARATOR;
 	s_player_model_title.generic.name = "model";
@@ -3766,9 +3805,10 @@ qboolean PlayerConfig_MenuInit( void )
 	return true;
 }
 
+extern float CalcFov( float fov_x, float w, float h );
+
 void PlayerConfig_MenuDraw( void )
 {
-	extern float CalcFov( float fov_x, float w, float h );
 	refdef_t refdef;
 	char scratch[MAX_QPATH];
 
@@ -3785,7 +3825,6 @@ void PlayerConfig_MenuDraw( void )
 	if ( s_pmi[s_player_model_box.curvalue].skindisplaynames )
 	{
 		static int yaw;
-		int maxframe = 29;
 		entity_t entity;
 
 		memset( &entity, 0, sizeof( entity ) );

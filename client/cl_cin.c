@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -436,9 +436,9 @@ byte *SCR_ReadNextFrame (void)
 	int		start, end, count;
 
 	// read the next frame
-	r = fread (&command, 4, 1, cl.cinematic_file);
+	r = (int)fread (&command, 4, 1, cl.cinematic_file);
 	if (r == 0)		// we'll give it one more chance
-		r = fread (&command, 4, 1, cl.cinematic_file);
+		r = (int)fread (&command, 4, 1, cl.cinematic_file);
 
 	if (r != 1)
 		return NULL;
@@ -554,7 +554,7 @@ qboolean SCR_DrawCinematic (void)
 
 	if (!cl.cinematicpalette_active)
 	{
-		re.CinematicSetPalette(cl.cinematicpalette);
+		re.CinematicSetPalette((const unsigned char*)cl.cinematicpalette);
 		cl.cinematicpalette_active = true;
 	}
 

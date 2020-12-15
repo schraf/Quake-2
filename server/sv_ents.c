@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -130,12 +130,16 @@ void SV_EmitPacketEntities (client_frame_t *from, client_frame_t *to, sizebuf_t 
 	int		from_num_entities;
 	int		bits;
 
+	newent = NULL;
+	oldent = NULL;
+
 #if 0
 	if (numprojs)
 		MSG_WriteByte (msg, svc_packetentities2);
 	else
 #endif
-		MSG_WriteByte (msg, svc_packetentities);
+
+	MSG_WriteByte (msg, svc_packetentities);
 
 	if (!from)
 		from_num_entities = 0;
@@ -700,12 +704,12 @@ void SV_RecordDemoMessage (void)
 
 	e = 1;
 	ent = EDICT_NUM(e);
-	while (e < ge->num_edicts) 
+	while (e < ge->num_edicts)
 	{
 		// ignore ents without visible models unless they have an effect
 		if (ent->inuse &&
-			ent->s.number && 
-			(ent->s.modelindex || ent->s.effects || ent->s.sound || ent->s.event) && 
+			ent->s.number &&
+			(ent->s.modelindex || ent->s.effects || ent->s.sound || ent->s.event) &&
 			!(ent->svflags & SVF_NOCLIENT))
 			MSG_WriteDeltaEntity (&nostate, &ent->s, &buf, false, true);
 

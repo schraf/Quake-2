@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -198,13 +198,13 @@ qboolean Field_Key( menufield_s *f, int key )
 		 ( ( ( key == K_INS ) || ( key == K_KP_INS ) ) && keydown[K_SHIFT] ) )
 	{
 		char *cbd;
-		
+
 		if ( ( cbd = Sys_GetClipboardData() ) != 0 )
 		{
 			strtok( cbd, "\n\r\b" );
 
 			strncpy( f->buffer, cbd, f->length - 1 );
-			f->cursor = strlen( f->buffer );
+			f->cursor = Q_strlen( f->buffer );
 			f->visible_offset = f->cursor - f->visible_length;
 			if ( f->visible_offset < 0 )
 				f->visible_offset = 0;
@@ -417,8 +417,7 @@ void Menu_DrawStatusBar( const char *string )
 {
 	if ( string )
 	{
-		int l = strlen( string );
-		int maxrow = VID_HEIGHT / 8;
+		int l = Q_strlen( string );
 		int maxcol = VID_WIDTH / 8;
 		int col = maxcol / 2 - l / 2;
 
@@ -609,7 +608,7 @@ void Slider_Draw( menuslider_s *s )
 	int	i;
 
 	Menu_DrawStringR2LDark( s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
-		                s->generic.y + s->generic.parent->y, 
+		                s->generic.y + s->generic.parent->y,
 						s->generic.name );
 
 	s->range = ( s->curvalue - s->minvalue ) / ( float ) ( s->maxvalue - s->minvalue );
@@ -654,8 +653,8 @@ void SpinControl_Draw( menulist_s *s )
 
 	if ( s->generic.name )
 	{
-		Menu_DrawStringR2LDark( s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET, 
-							s->generic.y + s->generic.parent->y, 
+		Menu_DrawStringR2LDark( s->generic.x + s->generic.parent->x + LCOLUMN_OFFSET,
+							s->generic.y + s->generic.parent->y,
 							s->generic.name );
 	}
 	if ( !strchr( s->itemnames[s->curvalue], '\n' ) )

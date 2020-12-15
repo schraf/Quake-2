@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -159,8 +159,8 @@ Begins recording a demo from the current position
 */
 void CL_Record_f (void)
 {
-	char	name[MAX_OSPATH];
-	char	buf_data[MAX_MSGLEN];
+	char	filename[MAX_OSPATH];
+	byte	buf_data[MAX_MSGLEN];
 	sizebuf_t	buf;
 	int		i;
 	int		len;
@@ -188,11 +188,11 @@ void CL_Record_f (void)
 	//
 	// open the demo file
 	//
-	Com_sprintf (name, sizeof(name), "%s/demos/%s.dm2", FS_Gamedir(), Cmd_Argv(1));
+	Com_sprintf (filename, sizeof(filename), "%s/demos/%s.dm2", FS_Gamedir(), Cmd_Argv(1));
 
-	Com_Printf ("recording to %s.\n", name);
-	FS_CreatePath (name);
-	cls.demofile = fopen (name, "wb");
+	Com_Printf ("recording to %s.\n", filename);
+	FS_CreatePath (filename);
+	cls.demofile = fopen (filename, "wb");
 	if (!cls.demofile)
 	{
 		Com_Printf ("ERROR: couldn't open.\n");
@@ -254,7 +254,7 @@ void CL_Record_f (void)
 			buf.cursize = 0;
 		}
 
-		MSG_WriteByte (&buf, svc_spawnbaseline);		
+		MSG_WriteByte (&buf, svc_spawnbaseline);
 		MSG_WriteDeltaEntity (&nullstate, &cl_entities[i].baseline, &buf, true, true);
 	}
 
@@ -349,7 +349,7 @@ void CL_ForwardToServer_f (void)
 		Com_Printf ("Can't \"%s\", not connected\n", Cmd_Argv(0));
 		return;
 	}
-	
+
 	// don't forward the first argument
 	if (Cmd_Argc() > 1)
 	{
@@ -498,9 +498,9 @@ void CL_Connect_f (void)
 	if (Cmd_Argc() != 2)
 	{
 		Com_Printf ("usage: connect <server>\n");
-		return;	
+		return;
 	}
-	
+
 	if (Com_ServerState ())
 	{	// if running a local server, kill it and reissue
 		SV_Shutdown (va("Server quit\n", msg), false);
@@ -543,10 +543,10 @@ void CL_Rcon_f (void)
 		return;
 	}
 
-	message[0] = (char)255;
-	message[1] = (char)255;
-	message[2] = (char)255;
-	message[3] = (char)255;
+	message[0] = 0xFF;
+	message[1] = 0xFF;
+	message[2] = 0xFF;
+	message[3] = 0xFF;
 	message[4] = 0;
 
 	NET_Config (true);		// allow remote
@@ -578,8 +578,8 @@ void CL_Rcon_f (void)
 		if (to.port == 0)
 			to.port = BigShort (PORT_SERVER);
 	}
-	
-	NET_SendPacket (NS_CLIENT, strlen(message)+1, message, to);
+
+	NET_SendPacket (NS_CLIENT, Q_strlen(message)+1, message, to);
 }
 
 
@@ -622,7 +622,7 @@ void CL_Disconnect (void)
 	if (cl_timedemo && cl_timedemo->value)
 	{
 		int	time;
-		
+
 		time = Sys_Milliseconds () - cl.timedemo_start;
 		if (time > 0)
 			Com_Printf ("%i frames, %3.1f seconds: %3.1f fps\n", cl.timedemo_frames,
@@ -644,9 +644,9 @@ void CL_Disconnect (void)
 	// send a disconnect message to the server
 	final[0] = clc_stringcmd;
 	strcpy ((char *)final+1, "disconnect");
-	Netchan_Transmit (&cls.netchan, strlen(final), final);
-	Netchan_Transmit (&cls.netchan, strlen(final), final);
-	Netchan_Transmit (&cls.netchan, strlen(final), final);
+	Netchan_Transmit (&cls.netchan, Q_strlen((char*)final), final);
+	Netchan_Transmit (&cls.netchan, Q_strlen((char*)final), final);
+	Netchan_Transmit (&cls.netchan, Q_strlen((char*)final), final);
 
 	CL_ClearState ();
 
@@ -699,9 +699,9 @@ void CL_Packet_f (void)
 
 	in = Cmd_Argv(2);
 	out = send+4;
-	send[0] = send[1] = send[2] = send[3] = (char)0xff;
+	send[0] = send[1] = send[2] = send[3] = 0xFF;
 
-	l = strlen (in);
+	l = Q_strlen (in);
 	for (i=0 ; i<l ; i++)
 	{
 		if (in[i] == '\\' && in[i+1] == 'n')
@@ -757,7 +757,7 @@ void CL_Reconnect_f (void)
 		Com_Printf ("reconnecting...\n");
 		cls.state = ca_connected;
 		MSG_WriteChar (&cls.netchan.message, clc_stringcmd);
-		MSG_WriteString (&cls.netchan.message, "new");		
+		MSG_WriteString (&cls.netchan.message, "new");
 		return;
 	}
 
@@ -800,7 +800,7 @@ void CL_PingServers_f (void)
 {
 	int			i;
 	netadr_t	adr;
-	char		name[32];
+	char		varname[32];
 	char		*adrstring;
 	cvar_t		*noudp;
 	cvar_t		*noipx;
@@ -829,8 +829,8 @@ void CL_PingServers_f (void)
 	// send a packet to each address book entry
 	for (i=0 ; i<16 ; i++)
 	{
-		Com_sprintf (name, sizeof(name), "adr%i", i);
-		adrstring = Cvar_VariableString (name);
+		Com_sprintf (varname, sizeof(varname), "adr%i", i);
+		adrstring = Cvar_VariableString (varname);
 		if (!adrstring || !adrstring[0])
 			continue;
 
@@ -862,7 +862,7 @@ void CL_Skins_f (void)
 	{
 		if (!cl.configstrings[CS_PLAYERSKINS+i][0])
 			continue;
-		Com_Printf ("client %i: %s\n", i, cl.configstrings[CS_PLAYERSKINS+i]); 
+		Com_Printf ("client %i: %s\n", i, cl.configstrings[CS_PLAYERSKINS+i]);
 		SCR_UpdateScreen ();
 		Sys_SendKeyEvents ();	// pump message loop
 		CL_ParseClientinfo (i);
@@ -881,7 +881,7 @@ void CL_ConnectionlessPacket (void)
 {
 	char	*s;
 	char	*c;
-	
+
 	MSG_BeginReading (&net_message);
 	MSG_ReadLong (&net_message);	// skip the -1
 
@@ -903,7 +903,7 @@ void CL_ConnectionlessPacket (void)
 		}
 		Netchan_Setup (NS_CLIENT, &cls.netchan, net_from, cls.quakePort);
 		MSG_WriteChar (&cls.netchan.message, clc_stringcmd);
-		MSG_WriteString (&cls.netchan.message, "new");	
+		MSG_WriteString (&cls.netchan.message, "new");
 		cls.state = ca_connected;
 		return;
 	}
@@ -1036,7 +1036,7 @@ void CL_ReadPackets (void)
 	}
 	else
 		cl.timeoutcount = 0;
-	
+
 }
 
 
@@ -1179,14 +1179,14 @@ void CL_RequestNextDownload (void)
 
 				while (precache_model_skin - 1 < LittleLong(pheader->num_skins)) {
 					if (!CL_CheckOrDownloadFile((char *)precache_model +
-						LittleLong(pheader->ofs_skins) + 
+						LittleLong(pheader->ofs_skins) +
 						(precache_model_skin - 1)*MAX_SKINNAME)) {
 						precache_model_skin++;
 						return; // started a download
 					}
 					precache_model_skin++;
 				}
-				if (precache_model) { 
+				if (precache_model) {
 					FS_FreeFile(precache_model);
 					precache_model = 0;
 				}
@@ -1196,7 +1196,7 @@ void CL_RequestNextDownload (void)
 		}
 		precache_check = CS_SOUNDS;
 	}
-	if (precache_check >= CS_SOUNDS && precache_check < CS_SOUNDS+MAX_SOUNDS) { 
+	if (precache_check >= CS_SOUNDS && precache_check < CS_SOUNDS+MAX_SOUNDS) {
 		if (allow_download_sounds->value) {
 			if (precache_check == CS_SOUNDS)
 				precache_check++; // zero is blank
@@ -1231,7 +1231,7 @@ void CL_RequestNextDownload (void)
 		if (allow_download_players->value) {
 			while (precache_check < CS_PLAYERSKINS + MAX_CLIENTS * PLAYER_MULT) {
 				int i, n;
-				char model[MAX_QPATH], skin[MAX_QPATH], *p;
+				char model[MAX_QPATH], skinpath[MAX_QPATH], *p;
 
 				i = (precache_check - CS_PLAYERSKINS)/PLAYER_MULT;
 				n = (precache_check - CS_PLAYERSKINS)%PLAYER_MULT;
@@ -1251,9 +1251,9 @@ void CL_RequestNextDownload (void)
 					p = strchr(model, '\\');
 				if (p) {
 					*p++ = 0;
-					strcpy(skin, p);
+					strcpy(skinpath, p);
 				} else
-					*skin = 0;
+					*skinpath = 0;
 
 				switch (n) {
 				case 0: // model
@@ -1284,7 +1284,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 3: // skin
-					Com_sprintf(fn, sizeof(fn), "players/%s/%s.pcx", model, skin);
+					Com_sprintf(fn, sizeof(fn), "players/%s/%s.pcx", model, skinpath);
 					if (!CL_CheckOrDownloadFile(fn)) {
 						precache_check = CS_PLAYERSKINS + i * PLAYER_MULT + 4;
 						return; // started a download
@@ -1293,7 +1293,7 @@ void CL_RequestNextDownload (void)
 					/*FALL THROUGH*/
 
 				case 4: // skin_i
-					Com_sprintf(fn, sizeof(fn), "players/%s/%s_i.pcx", model, skin);
+					Com_sprintf(fn, sizeof(fn), "players/%s/%s_i.pcx", model, skinpath);
 					if (!CL_CheckOrDownloadFile(fn)) {
 						precache_check = CS_PLAYERSKINS + i * PLAYER_MULT + 5;
 						return; // started a download
@@ -1312,7 +1312,7 @@ void CL_RequestNextDownload (void)
 
 		CM_LoadMap (cl.configstrings[CS_MODELS+1], true, &map_checksum);
 
-		if (map_checksum != atoi(cl.configstrings[CS_MAPCHECKSUM])) {
+		if (map_checksum != (unsigned int)atoi(cl.configstrings[CS_MAPCHECKSUM])) {
 			Com_Error (ERR_DROP, "Local map version differs from server: %i != '%s'\n",
 				map_checksum, cl.configstrings[CS_MAPCHECKSUM]);
 			return;
@@ -1325,10 +1325,10 @@ void CL_RequestNextDownload (void)
 				int n = precache_check++ - ENV_CNT - 1;
 
 				if (n & 1)
-					Com_sprintf(fn, sizeof(fn), "env/%s%s.pcx", 
+					Com_sprintf(fn, sizeof(fn), "env/%s%s.pcx",
 						cl.configstrings[CS_SKY], env_suf[n/2]);
 				else
-					Com_sprintf(fn, sizeof(fn), "env/%s%s.tga", 
+					Com_sprintf(fn, sizeof(fn), "env/%s%s.tga",
 						cl.configstrings[CS_SKY], env_suf[n/2]);
 				if (!CL_CheckOrDownloadFile(fn))
 					return; // started a download
@@ -1350,8 +1350,6 @@ void CL_RequestNextDownload (void)
 
 		if (allow_download->value && allow_download_maps->value) {
 			while (precache_tex < numtexinfo) {
-				char fn[MAX_OSPATH];
-
 				sprintf(fn, "textures/%s.wal", map_surfaces[precache_tex++].rname);
 				if (!CL_CheckOrDownloadFile(fn))
 					return; // started a download
@@ -1613,7 +1611,7 @@ void CL_FixCvarCheats (void)
 	int			i;
 	cheatvar_t	*var;
 
-	if ( !strcmp(cl.configstrings[CS_MAXCLIENTS], "1") 
+	if ( !strcmp(cl.configstrings[CS_MAXCLIENTS], "1")
 		|| !cl.configstrings[CS_MAXCLIENTS][0] )
 		return;		// single player can cheat
 
@@ -1736,7 +1734,7 @@ void CL_Frame (int msec)
 
 	// update audio
 	S_Update (cl.refdef.vieworg, cl.v_forward, cl.v_right, cl.v_up);
-	
+
 	CDAudio_Update();
 
 	// advance local effects for next frame
@@ -1784,22 +1782,22 @@ void CL_Init (void)
 
 	// all archived variables will now be loaded
 
-	Con_Init ();	
+	Con_Init ();
 #if defined __linux__ || defined __sgi
-	S_Init ();	
+	S_Init ();
 	VID_Init ();
 #else
 	VID_Init ();
 	S_Init ();	// sound must be initialized after window is created
 #endif
-	
+
 	V_Init ();
-	
+
 	net_message.data = net_message_buffer;
 	net_message.maxsize = sizeof(net_message_buffer);
 
-	M_Init ();	
-	
+	M_Init ();
+
 	SCR_Init ();
 	cls.disable_screen = true;	// don't draw yet
 
@@ -1825,7 +1823,7 @@ to run quit through here before the final handoff to the sys code.
 void CL_Shutdown(void)
 {
 	static qboolean isdown = false;
-	
+
 	if (isdown)
 	{
 		printf ("recursive shutdown\n");
@@ -1833,7 +1831,7 @@ void CL_Shutdown(void)
 	}
 	isdown = true;
 
-	CL_WriteConfiguration (); 
+	CL_WriteConfiguration ();
 
 	CDAudio_Shutdown ();
 	S_Shutdown();
