@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <libc.h>
 #endif
 
-#define	BASEDIRNAME	"data"
+#define	BASEDIRNAME	"idtech2"
 #define PATHSEPERATOR   '/'
 
 // set these before calling CheckParm

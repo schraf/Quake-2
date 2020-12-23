@@ -808,7 +808,7 @@ void Key_Event (int key, qboolean down, unsigned time)
 			break;
 		case key_game:
 		case key_console:
-			M_Menu_Main_f ();
+			CL_Quit_f ();
 			break;
 		default:
 			Com_Error (ERR_FATAL, "Bad cls.key_dest");
