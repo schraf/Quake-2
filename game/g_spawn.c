@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -103,7 +103,6 @@ void SP_misc_actor (edict_t *self);
 void SP_misc_gib_arm (edict_t *self);
 void SP_misc_gib_leg (edict_t *self);
 void SP_misc_gib_head (edict_t *self);
-void SP_misc_insane (edict_t *self);
 void SP_misc_deadsoldier (edict_t *self);
 void SP_misc_viper (edict_t *self);
 void SP_misc_viper_bomb (edict_t *self);
@@ -116,29 +115,8 @@ void SP_misc_eastertank (edict_t *self);
 void SP_misc_easterchick (edict_t *self);
 void SP_misc_easterchick2 (edict_t *self);
 
-void SP_monster_berserk (edict_t *self);
-void SP_monster_gladiator (edict_t *self);
-void SP_monster_gunner (edict_t *self);
 void SP_monster_infantry (edict_t *self);
-void SP_monster_soldier_light (edict_t *self);
 void SP_monster_soldier (edict_t *self);
-void SP_monster_soldier_ss (edict_t *self);
-void SP_monster_tank (edict_t *self);
-void SP_monster_medic (edict_t *self);
-void SP_monster_flipper (edict_t *self);
-void SP_monster_chick (edict_t *self);
-void SP_monster_parasite (edict_t *self);
-void SP_monster_flyer (edict_t *self);
-void SP_monster_brain (edict_t *self);
-void SP_monster_floater (edict_t *self);
-void SP_monster_hover (edict_t *self);
-void SP_monster_mutant (edict_t *self);
-void SP_monster_supertank (edict_t *self);
-void SP_monster_boss2 (edict_t *self);
-void SP_monster_jorg (edict_t *self);
-void SP_monster_boss3_stand (edict_t *self);
-
-void SP_monster_commander_body (edict_t *self);
 
 void SP_turret_breach (edict_t *self);
 void SP_turret_base (edict_t *self);
@@ -223,7 +201,6 @@ spawn_t	spawns[] = {
 	{"misc_gib_arm", SP_misc_gib_arm},
 	{"misc_gib_leg", SP_misc_gib_leg},
 	{"misc_gib_head", SP_misc_gib_head},
-	{"misc_insane", SP_misc_insane},
 	{"misc_deadsoldier", SP_misc_deadsoldier},
 	{"misc_viper", SP_misc_viper},
 	{"misc_viper_bomb", SP_misc_viper_bomb},
@@ -236,30 +213,8 @@ spawn_t	spawns[] = {
 	{"misc_easterchick", SP_misc_easterchick},
 	{"misc_easterchick2", SP_misc_easterchick2},
 
-	{"monster_berserk", SP_monster_berserk},
-	{"monster_gladiator", SP_monster_gladiator},
-	{"monster_gunner", SP_monster_gunner},
 	{"monster_infantry", SP_monster_infantry},
-	{"monster_soldier_light", SP_monster_soldier_light},
 	{"monster_soldier", SP_monster_soldier},
-	{"monster_soldier_ss", SP_monster_soldier_ss},
-	{"monster_tank", SP_monster_tank},
-	{"monster_tank_commander", SP_monster_tank},
-	{"monster_medic", SP_monster_medic},
-	{"monster_flipper", SP_monster_flipper},
-	{"monster_chick", SP_monster_chick},
-	{"monster_parasite", SP_monster_parasite},
-	{"monster_flyer", SP_monster_flyer},
-	{"monster_brain", SP_monster_brain},
-	{"monster_floater", SP_monster_floater},
-	{"monster_hover", SP_monster_hover},
-	{"monster_mutant", SP_monster_mutant},
-	{"monster_supertank", SP_monster_supertank},
-	{"monster_boss2", SP_monster_boss2},
-	{"monster_boss3_stand", SP_monster_boss3_stand},
-	{"monster_jorg", SP_monster_jorg},
-
-	{"monster_commander_body", SP_monster_commander_body},
 
 	{"turret_breach", SP_turret_breach},
 	{"turret_base", SP_turret_base},
@@ -320,7 +275,7 @@ char *ED_NewString (char *string)
 {
 	char	*newb, *new_p;
 	int		i,l;
-	
+
 	l = strlen(string) + 1;
 
 	newb = gi.TagMalloc (l, TAG_LEVEL);
@@ -340,7 +295,7 @@ char *ED_NewString (char *string)
 		else
 			*new_p++ = string[i];
 	}
-	
+
 	return newb;
 }
 
@@ -422,7 +377,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 
 // go through all the dictionary pairs
 	while (1)
-	{	
+	{
 	// parse key
 		com_token = COM_Parse (&data);
 		if (com_token[0] == '}')
@@ -431,8 +386,8 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
 
 		strncpy (keyname, com_token, sizeof(keyname)-1);
-		
-	// parse value	
+
+	// parse value
 		com_token = COM_Parse (&data);
 		if (!data)
 			gi.error ("ED_ParseEntity: EOF without closing brace");
@@ -440,7 +395,7 @@ char *ED_ParseEdict (char *data, edict_t *ent)
 		if (com_token[0] == '}')
 			gi.error ("ED_ParseEntity: closing brace without data");
 
-		init = true;	
+		init = true;
 
 	// keynames with a leading underscore are used for utility comments,
 	// and are immediately discarded by quake
@@ -553,7 +508,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 // parse ents
 	while (1)
 	{
-		// parse the opening brace	
+		// parse the opening brace
 		com_token = COM_Parse (&entities);
 		if (!entities)
 			break;
@@ -577,7 +532,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 			{
 				if ( ent->spawnflags & SPAWNFLAG_NOT_DEATHMATCH )
 				{
-					G_FreeEdict (ent);	
+					G_FreeEdict (ent);
 					inhibit++;
 					continue;
 				}
@@ -590,7 +545,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 					(((skill->value == 2) || (skill->value == 3)) && (ent->spawnflags & SPAWNFLAG_NOT_HARD))
 					)
 					{
-						G_FreeEdict (ent);	
+						G_FreeEdict (ent);
 						inhibit++;
 						continue;
 					}
@@ -600,7 +555,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 		}
 
 		ED_CallSpawn (ent);
-	}	
+	}
 
 	gi.dprintf ("%i entities inhibited\n", inhibit);
 
@@ -645,7 +600,7 @@ void SpawnEntities (char *mapname, char *entities, char *spawnpoint)
 
 #endif
 
-char *single_statusbar = 
+char *single_statusbar =
 "yb	-24 "
 
 // health
@@ -696,7 +651,7 @@ char *single_statusbar =
 "	pic	9 "
 "endif "
 
-//  help / weapon icon 
+//  help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -754,7 +709,7 @@ char *dm_statusbar =
 "	pic	9 "
 "endif "
 
-//  help / weapon icon 
+//  help / weapon icon
 "if 11 "
 "	xv	148 "
 "	pic	11 "
@@ -876,9 +831,9 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("*death3.wav");
 	gi.soundindex ("*death4.wav");
 	gi.soundindex ("*fall1.wav");
-	gi.soundindex ("*fall2.wav");	
+	gi.soundindex ("*fall2.wav");
 	gi.soundindex ("*gurp1.wav");		// drowning damage
-	gi.soundindex ("*gurp2.wav");	
+	gi.soundindex ("*gurp2.wav");
 	gi.soundindex ("*jump1.wav");		// player jump
 	gi.soundindex ("*pain25_1.wav");
 	gi.soundindex ("*pain25_2.wav");
@@ -913,7 +868,7 @@ void SP_worldspawn (edict_t *ent)
 	gi.soundindex ("player/watr_out.wav");	// feet leaving water
 
 	gi.soundindex ("player/watr_un.wav");	// head going underwater
-	
+
 	gi.soundindex ("player/u_breath1.wav");
 	gi.soundindex ("player/u_breath2.wav");
 
@@ -942,40 +897,40 @@ void SP_worldspawn (edict_t *ent)
 
 	// 0 normal
 	gi.configstring(CS_LIGHTS+0, "m");
-	
+
 	// 1 FLICKER (first variety)
 	gi.configstring(CS_LIGHTS+1, "mmnmmommommnonmmonqnmmo");
-	
+
 	// 2 SLOW STRONG PULSE
 	gi.configstring(CS_LIGHTS+2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
-	
+
 	// 3 CANDLE (first variety)
 	gi.configstring(CS_LIGHTS+3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
-	
+
 	// 4 FAST STROBE
 	gi.configstring(CS_LIGHTS+4, "mamamamamama");
-	
+
 	// 5 GENTLE PULSE 1
 	gi.configstring(CS_LIGHTS+5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
-	
+
 	// 6 FLICKER (second variety)
 	gi.configstring(CS_LIGHTS+6, "nmonqnmomnmomomno");
-	
+
 	// 7 CANDLE (second variety)
 	gi.configstring(CS_LIGHTS+7, "mmmaaaabcdefgmmmmaaaammmaamm");
-	
+
 	// 8 CANDLE (third variety)
 	gi.configstring(CS_LIGHTS+8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
-	
+
 	// 9 SLOW STROBE (fourth variety)
 	gi.configstring(CS_LIGHTS+9, "aaaaaaaazzzzzzzz");
-	
+
 	// 10 FLUORESCENT FLICKER
 	gi.configstring(CS_LIGHTS+10, "mmamammmmammamamaaamammma");
 
 	// 11 SLOW PULSE NOT FADE TO BLACK
 	gi.configstring(CS_LIGHTS+11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
-	
+
 	// styles 32-62 are assigned by the light program for switchable lights
 
 	// 63 testing

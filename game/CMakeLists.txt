@@ -22,29 +22,10 @@ add_library(game SHARED
 	g_utils.c
 	g_weapon.c
 	m_actor.c
-	m_berserk.c
-	m_boss2.c
-	m_boss3.c
-	m_boss31.c
-	m_boss32.c
-	m_brain.c
-	m_chick.c
 	m_flash.c
-	m_flipper.c
-	m_float.c
-	m_flyer.c
-	m_gladiator.c
-	m_gunner.c
-	m_hover.c
 	m_infantry.c
-	m_insane.c
-	m_medic.c
 	m_move.c
-	m_mutant.c
-	m_parasite.c
 	m_soldier.c
-	m_supertank.c
-	m_tank.c
 	p_client.c
 	p_hud.c
 	p_trail.c
