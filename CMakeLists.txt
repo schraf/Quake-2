@@ -11,6 +11,7 @@ add_subdirectory("qcommon")
 add_subdirectory("server")
 add_subdirectory("ref_gl")
 add_subdirectory("win32")
+add_subdirectory("tools")
 
 if(WIN32)
 	add_executable(quake2 WIN32 $<TARGET_OBJECTS:win32>)
