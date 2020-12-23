@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -17,10 +17,32 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
+// Quake is a trademark of Id Software, Inc., (c) 1996 Id Software, Inc. All
+// rights reserved.
 
-int		CDAudio_Init(void);
-void	CDAudio_Shutdown(void);
-void	CDAudio_Play(int track, qboolean looping);
-void	CDAudio_Stop(void);
-void	CDAudio_Update(void);
-void	CDAudio_Activate (qboolean active);
+#include "../client/client.h"
+
+int Music_Init(void)
+{
+	return 0;
+}
+
+void Music_Shutdown(void)
+{
+}
+
+void Music_Play(int track, qboolean looping)
+{
+}
+
+void Music_Stop(void)
+{
+}
+
+void Music_Update(void)
+{
+}
+
+void Music_Activate (qboolean active)
+{
+}

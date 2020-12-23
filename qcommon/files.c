@@ -341,7 +341,7 @@ FS_ReadFile
 Properly handles partial reads
 =================
 */
-void CDAudio_Stop(void);
+void Music_Stop(void);
 #define	MAX_READ	0x10000		// read in blocks of 64k
 void FS_Read (void *buffer, int len, FILE *f)
 {
@@ -367,7 +367,7 @@ void FS_Read (void *buffer, int len, FILE *f)
 			if (!tries)
 			{
 				tries = 1;
-				CDAudio_Stop();
+				Music_Stop();
 			}
 			else
 				Com_Error (ERR_FATAL, "FS_Read: 0 bytes read");

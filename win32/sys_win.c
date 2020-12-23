@@ -488,9 +488,9 @@ void *Sys_GetGameAPI (void *parms)
 	const char *gamename = "game.dll";
 
 #ifdef NDEBUG
-	const char *debugdir = "release";
+	const char *debugdir = "build/Release";
 #else
-	const char *debugdir = "debug";
+	const char *debugdir = "build/Debug";
 #endif
 
 #elif defined _M_ALPHA

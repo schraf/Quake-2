@@ -1,6 +1,3 @@
 build
 .vscode
-*.pak
-*.log
-*.ssv
-Debug
+baseq2
