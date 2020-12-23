@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -207,24 +207,6 @@ void Cmd_Give_f (edict_t *ent)
 				continue;
 			Add_Ammo (ent, it, 1000);
 		}
-		if (!give_all)
-			return;
-	}
-
-	if (give_all || Q_stricmp(name, "armor") == 0)
-	{
-		gitem_armor_t	*info;
-
-		it = FindItem("Jacket Armor");
-		ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
-
-		it = FindItem("Combat Armor");
-		ent->client->pers.inventory[ITEM_INDEX(it)] = 0;
-
-		it = FindItem("Body Armor");
-		info = (gitem_armor_t *)it->info;
-		ent->client->pers.inventory[ITEM_INDEX(it)] = info->max_count;
-
 		if (!give_all)
 			return;
 	}
@@ -838,7 +820,7 @@ void Cmd_Say_f (edict_t *ent, qboolean team, qboolean arg0)
         i = cl->flood_whenhead - flood_msgs->value + 1;
         if (i < 0)
             i = (sizeof(cl->flood_when)/sizeof(cl->flood_when[0])) + i;
-		if (cl->flood_when[i] && 
+		if (cl->flood_when[i] &&
 			level.time - cl->flood_when[i] < flood_persecond->value) {
 			cl->flood_locktill = level.time + flood_waitdelay->value;
 			gi.cprintf(ent, PRINT_CHAT, "Flood protection:  You can't talk for %d seconds.\n",

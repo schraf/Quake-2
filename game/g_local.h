@@ -66,7 +66,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #define	FL_WATERJUMP			0x00000200	// player jumping out of water
 #define	FL_TEAMSLAVE			0x00000400	// not the first on the team
 #define FL_NO_KNOCKBACK			0x00000800
-#define FL_POWER_ARMOR			0x00001000	// power armor (if any) is active
 #define FL_RESPAWN				0x80000000	// used for item respawning
 
 
@@ -152,11 +151,6 @@ typedef enum
 #define ARMOR_COMBAT			2
 #define ARMOR_BODY				3
 #define ARMOR_SHARD				4
-
-// power armor types
-#define POWER_ARMOR_NONE		0
-#define POWER_ARMOR_SCREEN		1
-#define POWER_ARMOR_SHIELD		2
 
 // handedness values
 #define RIGHT_HANDED			0
@@ -442,9 +436,6 @@ typedef struct
 	int			lefty;
 	float		idle_time;
 	int			linkcount;
-
-	int			power_armor_type;
-	int			power_armor_power;
 } monsterinfo_t;
 
 
@@ -457,11 +448,6 @@ extern	spawn_temp_t	st;
 
 extern	int	sm_meat_index;
 extern	int	snd_fry;
-
-extern	int	jacket_armor_index;
-extern	int	combat_armor_index;
-extern	int	body_armor_index;
-
 
 // means of death
 #define MOD_UNKNOWN			0
@@ -617,7 +603,6 @@ void ChangeWeapon (edict_t *ent);
 void SpawnItem (edict_t *ent, gitem_t *item);
 void Think_Weapon (edict_t *ent);
 int ArmorIndex (edict_t *ent);
-int PowerArmorType (edict_t *ent);
 gitem_t	*GetItemByIndex (int index);
 qboolean Add_Ammo (edict_t *ent, gitem_t *item, int count);
 void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf);
@@ -906,7 +891,6 @@ struct gclient_s
 	// sum up damage over an entire frame, so
 	// shotgun blasts give a single big kick
 	int			damage_armor;		// damage absorbed by armor
-	int			damage_parmor;		// damage absorbed by power armor
 	int			damage_blood;		// damage taken out of health
 	int			damage_knockback;	// impact damage
 	vec3_t		damage_from;		// origin for vector calculation
@@ -1056,8 +1040,6 @@ struct edict_s
 	int			gib_health;
 	int			deadflag;
 	qboolean	show_hostile;
-
-	float		powerarmor_time;
 
 	char		*map;			// target_changelevel
 

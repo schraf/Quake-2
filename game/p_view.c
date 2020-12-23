@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -44,20 +44,20 @@ float SV_CalcRoll (vec3_t angles, vec3_t velocity)
 	float	sign;
 	float	side;
 	float	value;
-	
+
 	side = DotProduct (velocity, right);
 	sign = side < 0 ? -1 : 1;
 	side = fabs(side);
-	
+
 	value = sv_rollangle->value;
 
 	if (side < sv_rollspeed->value)
 		side = side * value / sv_rollspeed->value;
 	else
 		side = value;
-	
+
 	return side*sign;
-	
+
 }
 
 
@@ -89,7 +89,7 @@ void P_DamageFeedback (edict_t *player)
 		client->ps.stats[STAT_FLASHES] |= 2;
 
 	// total points of damage shot at the player this frame
-	count = (client->damage_blood + client->damage_armor + client->damage_parmor);
+	count = (client->damage_blood + client->damage_armor);
 	if (count == 0)
 		return;		// didn't take any damage
 
@@ -157,8 +157,6 @@ void P_DamageFeedback (edict_t *player)
 	// the color of the blend will vary based on how much was absorbed
 	// by different armors
 	VectorClear (v);
-	if (client->damage_parmor)
-		VectorMA (v, (float)client->damage_parmor/realcount, power_color, v);
 	if (client->damage_armor)
 		VectorMA (v, (float)client->damage_armor/realcount,  acolor, v);
 	if (client->damage_blood)
@@ -181,10 +179,10 @@ void P_DamageFeedback (edict_t *player)
 
 		VectorSubtract (client->damage_from, player->s.origin, v);
 		VectorNormalize (v);
-		
+
 		side = DotProduct (v, right);
 		client->v_dmg_roll = kick*side*0.3;
-		
+
 		side = -DotProduct (v, forward);
 		client->v_dmg_pitch = kick*side*0.3;
 
@@ -196,7 +194,6 @@ void P_DamageFeedback (edict_t *player)
 	//
 	client->damage_blood = 0;
 	client->damage_armor = 0;
-	client->damage_parmor = 0;
 	client->damage_knockback = 0;
 }
 
@@ -213,7 +210,7 @@ Auto pitching on slopes?
   fall from 256: 580 = 336400
   fall from 384: 720 = 518400
   fall from 512: 800 = 640000
-  fall from 640: 960 = 
+  fall from 640: 960 =
 
   damage = deltavelocity*deltavelocity  * 0.0001
 
@@ -271,7 +268,7 @@ void SV_CalcViewOffset (edict_t *ent)
 
 		delta = DotProduct (ent->velocity, forward);
 		angles[PITCH] += delta*run_pitch->value;
-		
+
 		delta = DotProduct (ent->velocity, right);
 		angles[ROLL] += delta*run_roll->value;
 
@@ -421,7 +418,7 @@ void SV_CalcBlend (edict_t *ent)
 	vec3_t	vieworg;
 	int		remaining;
 
-	ent->client->ps.blend[0] = ent->client->ps.blend[1] = 
+	ent->client->ps.blend[0] = ent->client->ps.blend[1] =
 		ent->client->ps.blend[2] = ent->client->ps.blend[3] = 0;
 
 	// add for contents
@@ -672,7 +669,7 @@ void P_WorldEffects (void)
 		// if out of air, start drowning
 		if (current_player->air_finished < level.time)
 		{	// drown!
-			if (current_player->client->next_drown_time < level.time 
+			if (current_player->client->next_drown_time < level.time
 				&& current_player->health > 0)
 			{
 				current_player->client->next_drown_time = level.time + 1;
@@ -752,20 +749,6 @@ void G_SetClientEffects (edict_t *ent)
 
 	if (ent->health <= 0 || level.intermissiontime)
 		return;
-
-	if (ent->powerarmor_time > level.time)
-	{
-		pa_type = PowerArmorType (ent);
-		if (pa_type == POWER_ARMOR_SCREEN)
-		{
-			ent->s.effects |= EF_POWERSCREEN;
-		}
-		else if (pa_type == POWER_ARMOR_SHIELD)
-		{
-			ent->s.effects |= EF_COLOR_SHELL;
-			ent->s.renderfx |= RF_SHELL_GREEN;
-		}
-	}
 
 	if (ent->client->quad_framenum > level.framenum)
 	{
@@ -967,7 +950,7 @@ void ClientEndServerFrame (edict_t *ent)
 	// If the origin or velocity have changed since ClientThink(),
 	// update the pmove values.  This will happen when the client
 	// is pushed by a bmodel or kicked by an explosion.
-	// 
+	//
 	// If it wasn't updated here, the view position would lag a frame
 	// behind the body position when pushed -- "sinking into plats"
 	//
@@ -1027,7 +1010,7 @@ void ClientEndServerFrame (edict_t *ent)
 		else
 			bobmove = 0.0625;
 	}
-	
+
 	bobtime = (current_client->bobtime += bobmove);
 
 	if (current_client->ps.pmove.pm_flags & PMF_DUCKED)

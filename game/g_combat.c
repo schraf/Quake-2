@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -46,7 +46,7 @@ qboolean CanDamage (edict_t *targ, edict_t *inflictor)
 			return true;
 		return false;
 	}
-	
+
 	trace = gi.trace (inflictor->s.origin, vec3_origin, vec3_origin, targ->s.origin, inflictor, MASK_SOLID);
 	if (trace.fraction == 1.0)
 		return true;
@@ -168,89 +168,6 @@ dflags		these flags are used to control how T_Damage works
 	DAMAGE_NO_PROTECTION	kills godmode, armor, everything
 ============
 */
-static int CheckPowerArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int dflags)
-{
-	gclient_t	*client;
-	int			save;
-	int			power_armor_type;
-	int			index;
-	int			damagePerCell;
-	int			pa_te_type;
-	int			power;
-	int			power_used;
-
-	if (!damage)
-		return 0;
-
-	client = ent->client;
-
-	if (dflags & DAMAGE_NO_ARMOR)
-		return 0;
-
-	if (client)
-	{
-		power_armor_type = PowerArmorType (ent);
-		if (power_armor_type != POWER_ARMOR_NONE)
-		{
-			index = ITEM_INDEX(FindItem("Cells"));
-			power = client->pers.inventory[index];
-		}
-	}
-	else if (ent->svflags & SVF_MONSTER)
-	{
-		power_armor_type = ent->monsterinfo.power_armor_type;
-		power = ent->monsterinfo.power_armor_power;
-	}
-	else
-		return 0;
-
-	if (power_armor_type == POWER_ARMOR_NONE)
-		return 0;
-	if (!power)
-		return 0;
-
-	if (power_armor_type == POWER_ARMOR_SCREEN)
-	{
-		vec3_t		vec;
-		float		dot;
-		vec3_t		forward;
-
-		// only works if damage point is in front
-		AngleVectors (ent->s.angles, forward, NULL, NULL);
-		VectorSubtract (point, ent->s.origin, vec);
-		VectorNormalize (vec);
-		dot = DotProduct (vec, forward);
-		if (dot <= 0.3)
-			return 0;
-
-		damagePerCell = 1;
-		pa_te_type = TE_SCREEN_SPARKS;
-		damage = damage / 3;
-	}
-	else
-	{
-		damagePerCell = 2;
-		pa_te_type = TE_SHIELD_SPARKS;
-		damage = (2 * damage) / 3;
-	}
-
-	save = power * damagePerCell;
-	if (!save)
-		return 0;
-	if (save > damage)
-		save = damage;
-
-	SpawnDamage (pa_te_type, point, normal, save);
-	ent->powerarmor_time = level.time + 0.2;
-
-	power_used = save / damagePerCell;
-
-	if (client)
-		client->pers.inventory[index] -= power_used;
-	else
-		ent->monsterinfo.power_armor_power -= power_used;
-	return save;
-}
 
 static int CheckArmor (edict_t *ent, vec3_t point, vec3_t normal, int damage, int te_sparks, int dflags)
 {
@@ -380,7 +297,6 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	int			take;
 	int			save;
 	int			asave;
-	int			psave;
 	int			te_sparks;
 
 	if (!targ->takedamage)
@@ -470,9 +386,6 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		save = damage;
 	}
 
-	psave = CheckPowerArmor (targ, point, normal, take, dflags);
-	take -= psave;
-
 	asave = CheckArmor (targ, point, normal, take, te_sparks, dflags);
 	take -= asave;
 
@@ -493,7 +406,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 
 		targ->health = targ->health - take;
-			
+
 		if (targ->health <= 0)
 		{
 			if ((targ->svflags & SVF_MONSTER) || (client))
@@ -530,7 +443,6 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	// at the end of the frame
 	if (client)
 	{
-		client->damage_parmor += psave;
 		client->damage_armor += asave;
 		client->damage_blood += take;
 		client->damage_knockback += knockback;

@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -35,16 +35,6 @@ void Weapon_Grenade (edict_t *ent);
 void Weapon_GrenadeLauncher (edict_t *ent);
 void Weapon_Railgun (edict_t *ent);
 void Weapon_BFG (edict_t *ent);
-
-gitem_armor_t jacketarmor_info	= { 25,  50, .30, .00, ARMOR_JACKET};
-gitem_armor_t combatarmor_info	= { 50, 100, .60, .30, ARMOR_COMBAT};
-gitem_armor_t bodyarmor_info	= {100, 200, .80, .60, ARMOR_BODY};
-
-static int	jacket_armor_index;
-static int	combat_armor_index;
-static int	body_armor_index;
-static int	power_screen_index;
-static int	power_shield_index;
 
 #define HEALTH_IGNORE_MAX	1
 #define HEALTH_TIMED		2
@@ -522,7 +512,7 @@ void Drop_Ammo (edict_t *ent, gitem_t *item)
 	else
 		dropped->count = ent->client->pers.inventory[index];
 
-	if (ent->client->pers.weapon && 
+	if (ent->client->pers.weapon &&
 		ent->client->pers.weapon->tag == AMMO_GRENADES &&
 		item->tag == AMMO_GRENADES &&
 		ent->client->pers.inventory[index] - dropped->count <= 0) {
@@ -592,163 +582,15 @@ int ArmorIndex (edict_t *ent)
 	if (!ent->client)
 		return 0;
 
-	if (ent->client->pers.inventory[jacket_armor_index] > 0)
-		return jacket_armor_index;
-
-	if (ent->client->pers.inventory[combat_armor_index] > 0)
-		return combat_armor_index;
-
-	if (ent->client->pers.inventory[body_armor_index] > 0)
-		return body_armor_index;
-
 	return 0;
 }
 
 qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 {
-	int				old_armor_index;
-	gitem_armor_t	*oldinfo;
-	gitem_armor_t	*newinfo;
-	int				newcount;
-	float			salvage;
-	int				salvagecount;
-
-	// get info on new armor
-	newinfo = (gitem_armor_t *)ent->item->info;
-
-	old_armor_index = ArmorIndex (other);
-
-	// handle armor shards specially
-	if (ent->item->tag == ARMOR_SHARD)
-	{
-		if (!old_armor_index)
-			other->client->pers.inventory[jacket_armor_index] = 2;
-		else
-			other->client->pers.inventory[old_armor_index] += 2;
-	}
-
-	// if player has no armor, just use it
-	else if (!old_armor_index)
-	{
-		other->client->pers.inventory[ITEM_INDEX(ent->item)] = newinfo->base_count;
-	}
-
-	// use the better armor
-	else
-	{
-		// get info on old armor
-		if (old_armor_index == jacket_armor_index)
-			oldinfo = &jacketarmor_info;
-		else if (old_armor_index == combat_armor_index)
-			oldinfo = &combatarmor_info;
-		else // (old_armor_index == body_armor_index)
-			oldinfo = &bodyarmor_info;
-
-		if (newinfo->normal_protection > oldinfo->normal_protection)
-		{
-			// calc new armor values
-			salvage = oldinfo->normal_protection / newinfo->normal_protection;
-			salvagecount = salvage * other->client->pers.inventory[old_armor_index];
-			newcount = newinfo->base_count + salvagecount;
-			if (newcount > newinfo->max_count)
-				newcount = newinfo->max_count;
-
-			// zero count of old armor so it goes away
-			other->client->pers.inventory[old_armor_index] = 0;
-
-			// change armor to new item with computed value
-			other->client->pers.inventory[ITEM_INDEX(ent->item)] = newcount;
-		}
-		else
-		{
-			// calc new armor values
-			salvage = newinfo->normal_protection / oldinfo->normal_protection;
-			salvagecount = salvage * newinfo->base_count;
-			newcount = other->client->pers.inventory[old_armor_index] + salvagecount;
-			if (newcount > oldinfo->max_count)
-				newcount = oldinfo->max_count;
-
-			// if we're already maxed out then we don't need the new armor
-			if (other->client->pers.inventory[old_armor_index] >= newcount)
-				return false;
-
-			// update current armor value
-			other->client->pers.inventory[old_armor_index] = newcount;
-		}
-	}
-
 	if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
 		SetRespawn (ent, 20);
 
 	return true;
-}
-
-//======================================================================
-
-int PowerArmorType (edict_t *ent)
-{
-	if (!ent->client)
-		return POWER_ARMOR_NONE;
-
-	if (!(ent->flags & FL_POWER_ARMOR))
-		return POWER_ARMOR_NONE;
-
-	if (ent->client->pers.inventory[power_shield_index] > 0)
-		return POWER_ARMOR_SHIELD;
-
-	if (ent->client->pers.inventory[power_screen_index] > 0)
-		return POWER_ARMOR_SCREEN;
-
-	return POWER_ARMOR_NONE;
-}
-
-void Use_PowerArmor (edict_t *ent, gitem_t *item)
-{
-	int		index;
-
-	if (ent->flags & FL_POWER_ARMOR)
-	{
-		ent->flags &= ~FL_POWER_ARMOR;
-		gi.sound(ent, CHAN_AUTO, gi.soundindex("misc/power2.wav"), 1, ATTN_NORM, 0);
-	}
-	else
-	{
-		index = ITEM_INDEX(FindItem("cells"));
-		if (!ent->client->pers.inventory[index])
-		{
-			gi.cprintf (ent, PRINT_HIGH, "No cells for power armor.\n");
-			return;
-		}
-		ent->flags |= FL_POWER_ARMOR;
-		gi.sound(ent, CHAN_AUTO, gi.soundindex("misc/power1.wav"), 1, ATTN_NORM, 0);
-	}
-}
-
-qboolean Pickup_PowerArmor (edict_t *ent, edict_t *other)
-{
-	int		quantity;
-
-	quantity = other->client->pers.inventory[ITEM_INDEX(ent->item)];
-
-	other->client->pers.inventory[ITEM_INDEX(ent->item)]++;
-
-	if (deathmatch->value)
-	{
-		if (!(ent->spawnflags & DROPPED_ITEM) )
-			SetRespawn (ent, ent->item->quantity);
-		// auto-use for DM only if we didn't already have one
-		if (!quantity)
-			ent->item->use (other, ent->item);
-	}
-
-	return true;
-}
-
-void Drop_PowerArmor (edict_t *ent, gitem_t *item)
-{
-	if ((ent->flags & FL_POWER_ARMOR) && (ent->client->pers.inventory[ITEM_INDEX(item)] == 1))
-		Use_PowerArmor (ent, item);
-	Drop_General (ent, item);
 }
 
 //======================================================================
@@ -774,7 +616,7 @@ void Touch_Item (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *surf
 	if (taken)
 	{
 		// flash the screen
-		other->client->bonus_alpha = 0.25;	
+		other->client->bonus_alpha = 0.25;
 
 		// show icon and name on status bar
 		other->client->ps.stats[STAT_PICKUP_ICON] = gi.imageindex(ent->item->icon);
@@ -857,7 +699,7 @@ edict_t *Drop_Item (edict_t *ent, gitem_t *item)
 	VectorSet (dropped->maxs, 15, 15, 15);
 	gi.setmodel (dropped, dropped->item->world_model);
 	dropped->solid = SOLID_TRIGGER;
-	dropped->movetype = MOVETYPE_TOSS;  
+	dropped->movetype = MOVETYPE_TOSS;
 	dropped->touch = drop_temp_touch;
 	dropped->owner = ent;
 
@@ -931,7 +773,7 @@ void droptofloor (edict_t *ent)
 	else
 		gi.setmodel (ent, ent->item->world_model);
 	ent->solid = SOLID_TRIGGER;
-	ent->movetype = MOVETYPE_TOSS;  
+	ent->movetype = MOVETYPE_TOSS;
 	ent->touch = Touch_Item;
 
 	v = tv(0,0,-128);
@@ -1076,7 +918,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 	{
 		if ( (int)dmflags->value & DF_NO_ARMOR )
 		{
-			if (item->pickup == Pickup_Armor || item->pickup == Pickup_PowerArmor)
+			if (item->pickup == Pickup_Armor)
 			{
 				G_FreeEdict (ent);
 				return;
@@ -1131,7 +973,7 @@ void SpawnItem (edict_t *ent, gitem_t *item)
 
 //======================================================================
 
-gitem_t	itemlist[] = 
+gitem_t	itemlist[] =
 {
 	{
 		NULL
@@ -1141,79 +983,10 @@ gitem_t	itemlist[] =
 	// ARMOR
 	//
 
-/*QUAKED item_armor_body (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"item_armor_body", 
-		Pickup_Armor,
-		NULL,
-		NULL,
-		NULL,
-		"misc/ar1_pkup.wav",
-		"models/items/armor/body/tris.md2", EF_ROTATE,
-		NULL,
-/* icon */		"i_bodyarmor",
-/* pickup */	"Body Armor",
-/* width */		3,
-		0,
-		NULL,
-		IT_ARMOR,
-		0,
-		&bodyarmor_info,
-		ARMOR_BODY,
-/* precache */ ""
-	},
-
-/*QUAKED item_armor_combat (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"item_armor_combat", 
-		Pickup_Armor,
-		NULL,
-		NULL,
-		NULL,
-		"misc/ar1_pkup.wav",
-		"models/items/armor/combat/tris.md2", EF_ROTATE,
-		NULL,
-/* icon */		"i_combatarmor",
-/* pickup */	"Combat Armor",
-/* width */		3,
-		0,
-		NULL,
-		IT_ARMOR,
-		0,
-		&combatarmor_info,
-		ARMOR_COMBAT,
-/* precache */ ""
-	},
-
-/*QUAKED item_armor_jacket (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"item_armor_jacket", 
-		Pickup_Armor,
-		NULL,
-		NULL,
-		NULL,
-		"misc/ar1_pkup.wav",
-		"models/items/armor/jacket/tris.md2", EF_ROTATE,
-		NULL,
-/* icon */		"i_jacketarmor",
-/* pickup */	"Jacket Armor",
-/* width */		3,
-		0,
-		NULL,
-		IT_ARMOR,
-		0,
-		&jacketarmor_info,
-		ARMOR_JACKET,
-/* precache */ ""
-	},
-
 /*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_armor_shard", 
+		"item_armor_shard",
 		Pickup_Armor,
 		NULL,
 		NULL,
@@ -1233,63 +1006,15 @@ gitem_t	itemlist[] =
 /* precache */ ""
 	},
 
-
-/*QUAKED item_power_screen (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"item_power_screen", 
-		Pickup_PowerArmor,
-		Use_PowerArmor,
-		Drop_PowerArmor,
-		NULL,
-		"misc/ar3_pkup.wav",
-		"models/items/armor/screen/tris.md2", EF_ROTATE,
-		NULL,
-/* icon */		"i_powerscreen",
-/* pickup */	"Power Screen",
-/* width */		0,
-		60,
-		NULL,
-		IT_ARMOR,
-		0,
-		NULL,
-		0,
-/* precache */ ""
-	},
-
-/*QUAKED item_power_shield (.3 .3 1) (-16 -16 -16) (16 16 16)
-*/
-	{
-		"item_power_shield",
-		Pickup_PowerArmor,
-		Use_PowerArmor,
-		Drop_PowerArmor,
-		NULL,
-		"misc/ar3_pkup.wav",
-		"models/items/armor/shield/tris.md2", EF_ROTATE,
-		NULL,
-/* icon */		"i_powershield",
-/* pickup */	"Power Shield",
-/* width */		0,
-		60,
-		NULL,
-		IT_ARMOR,
-		0,
-		NULL,
-		0,
-/* precache */ "misc/power2.wav misc/power1.wav"
-	},
-
-
 	//
-	// WEAPONS 
+	// WEAPONS
 	//
 
 /* weapon_blaster (.3 .3 1) (-16 -16 -16) (16 16 16)
 always owned, never in the world
 */
 	{
-		"weapon_blaster", 
+		"weapon_blaster",
 		NULL,
 		Use_Weapon,
 		NULL,
@@ -1312,7 +1037,7 @@ always owned, never in the world
 /*QUAKED weapon_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_shotgun", 
+		"weapon_shotgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1335,7 +1060,7 @@ always owned, never in the world
 /*QUAKED weapon_supershotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_supershotgun", 
+		"weapon_supershotgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1358,7 +1083,7 @@ always owned, never in the world
 /*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_machinegun", 
+		"weapon_machinegun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1381,7 +1106,7 @@ always owned, never in the world
 /*QUAKED weapon_chaingun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_chaingun", 
+		"weapon_chaingun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1473,7 +1198,7 @@ always owned, never in the world
 /*QUAKED weapon_hyperblaster (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_hyperblaster", 
+		"weapon_hyperblaster",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1496,7 +1221,7 @@ always owned, never in the world
 /*QUAKED weapon_railgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"weapon_railgun", 
+		"weapon_railgun",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
@@ -1665,7 +1390,7 @@ always owned, never in the world
 /*QUAKED item_quad (.3 .3 1) (-16 -16 -16) (16 16 16)
 */
 	{
-		"item_quad", 
+		"item_quad",
 		Pickup_Powerup,
 		Use_Quad,
 		Drop_General,
@@ -2207,10 +1932,4 @@ void SetItemNames (void)
 		it = &itemlist[i];
 		gi.configstring (CS_ITEMS+i, it->pickup_name);
 	}
-
-	jacket_armor_index = ITEM_INDEX(FindItem("Jacket Armor"));
-	combat_armor_index = ITEM_INDEX(FindItem("Combat Armor"));
-	body_armor_index   = ITEM_INDEX(FindItem("Body Armor"));
-	power_screen_index = ITEM_INDEX(FindItem("Power Screen"));
-	power_shield_index = ITEM_INDEX(FindItem("Power Shield"));
 }

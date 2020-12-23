@@ -21,7 +21,6 @@ add_library(game SHARED
 	g_turret.c
 	g_utils.c
 	g_weapon.c
-	m_actor.c
 	m_flash.c
 	m_infantry.c
 	m_move.c

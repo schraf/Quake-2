@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -489,7 +489,7 @@ void LookAtKiller (edict_t *self, edict_t *inflictor, edict_t *attacker)
 	}
 	if (self->client->killer_yaw < 0)
 		self->client->killer_yaw += 360;
-	
+
 
 }
 
@@ -545,7 +545,6 @@ void player_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	self->client->invincible_framenum = 0;
 	self->client->breather_framenum = 0;
 	self->client->enviro_framenum = 0;
-	self->flags &= ~FL_POWER_ARMOR;
 
 	if (self->health < -40)
 	{	// gib
@@ -641,7 +640,7 @@ void InitClientResp (gclient_t *client)
 ==================
 SaveClientData
 
-Some information that should be persistant, like health, 
+Some information that should be persistant, like health,
 is still stored in the edict structure, so it needs to
 be mirrored out to the client structure before all the
 edicts are wiped.
@@ -659,7 +658,7 @@ void SaveClientData (void)
 			continue;
 		game.clients[i].pers.health = ent->health;
 		game.clients[i].pers.max_health = ent->max_health;
-		game.clients[i].pers.savedFlags = (ent->flags & (FL_GODMODE|FL_NOTARGET|FL_POWER_ARMOR));
+		game.clients[i].pers.savedFlags = (ent->flags & (FL_GODMODE|FL_NOTARGET));
 		if (coop->value)
 			game.clients[i].pers.score = ent->client->resp.score;
 	}
@@ -1003,7 +1002,7 @@ void respawn (edict_t *self)
 	gi.AddCommandString ("menu_loadgame\n");
 }
 
-/* 
+/*
  * only called when pers.spectator changes
  * note that resp.spectator should be the opposite of pers.spectator here
  */
@@ -1016,8 +1015,8 @@ void spectator_respawn (edict_t *ent)
 
 	if (ent->client->pers.spectator) {
 		char *value = Info_ValueForKey (ent->client->pers.userinfo, "spectator");
-		if (*spectator_password->string && 
-			strcmp(spectator_password->string, "none") && 
+		if (*spectator_password->string &&
+			strcmp(spectator_password->string, "none") &&
 			strcmp(spectator_password->string, value)) {
 			gi.cprintf(ent, PRINT_HIGH, "Spectator password incorrect.\n");
 			ent->client->pers.spectator = false;
@@ -1045,7 +1044,7 @@ void spectator_respawn (edict_t *ent)
 		// he was a spectator and wants to join the game
 		// he must have the right password
 		char *value = Info_ValueForKey (ent->client->pers.userinfo, "password");
-		if (*password->string && strcmp(password->string, "none") && 
+		if (*password->string && strcmp(password->string, "none") &&
 			strcmp(password->string, value)) {
 			gi.cprintf(ent, PRINT_HIGH, "Password incorrect.\n");
 			ent->client->pers.spectator = true;
@@ -1077,7 +1076,7 @@ void spectator_respawn (edict_t *ent)
 
 	ent->client->respawn_time = level.time;
 
-	if (ent->client->pers.spectator) 
+	if (ent->client->pers.spectator)
 		gi.bprintf (PRINT_HIGH, "%s has moved to the sidelines\n", ent->client->pers.netname);
 	else
 		gi.bprintf (PRINT_HIGH, "%s joined the game\n", ent->client->pers.netname);
@@ -1259,7 +1258,7 @@ void PutClientInServer (edict_t *ent)
 =====================
 ClientBeginDeathmatch
 
-A client has just connected to the server in 
+A client has just connected to the server in
 deathmatch mode, so clear everything out before starting them.
 =====================
 */
@@ -1444,8 +1443,8 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	if (deathmatch->value && *value && strcmp(value, "0")) {
 		int i, numspec;
 
-		if (*spectator_password->string && 
-			strcmp(spectator_password->string, "none") && 
+		if (*spectator_password->string &&
+			strcmp(spectator_password->string, "none") &&
 			strcmp(spectator_password->string, value)) {
 			Info_SetValueForKey(userinfo, "rejmsg", "Spectator password required or incorrect.");
 			return false;
@@ -1463,7 +1462,7 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 	} else {
 		// check for a password
 		value = Info_ValueForKey (userinfo, "password");
-		if (*password->string && strcmp(password->string, "none") && 
+		if (*password->string && strcmp(password->string, "none") &&
 			strcmp(password->string, value)) {
 			Info_SetValueForKey(userinfo, "rejmsg", "Password required or incorrect.");
 			return false;
@@ -1581,7 +1580,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		client->ps.pmove.pm_type = PM_FREEZE;
 		// can exit intermission after five seconds
-		if (level.time > level.intermissiontime + 5.0 
+		if (level.time > level.intermissiontime + 5.0
 			&& (ucmd->buttons & BUTTON_ANY) )
 			level.exitintermission = true;
 		return;
