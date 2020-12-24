@@ -132,16 +132,6 @@ void ClientEndServerFrame (edict_t *ent);
 
 //============================================================================
 
-// client data that stays across multiple level loads
-typedef struct
-{
-	char		userinfo[MAX_INFO_STRING];
-	char		netname[16];
-
-	qboolean	connected;			// a loadgame will leave valid entities that
-									// just don't have a connection yet
-} client_persistant_t;
-
 // client data that stays across deathmatch respawns
 typedef struct
 {
@@ -150,7 +140,6 @@ typedef struct
 } client_respawn_t;
 
 // this structure is cleared on each PutClientInServer(),
-// except for 'client->pers'
 struct gclient_s
 {
 	// known to server
@@ -158,7 +147,6 @@ struct gclient_s
 	int				ping;
 
 	// private to game
-	client_persistant_t	pers;
 	client_respawn_t	resp;
 	pmove_state_t		old_pmove;	// for detecting out-of-pmove changes
 
@@ -170,7 +158,6 @@ struct gclient_s
 	vec3_t		oldviewangles;
 	vec3_t		oldvelocity;
 };
-
 
 struct edict_s
 {

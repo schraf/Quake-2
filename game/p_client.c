@@ -83,7 +83,7 @@ void PutClientInServer (edict_t *ent)
 	client->ps.pmove.origin[1] = spawn_origin[1]*8;
 	client->ps.pmove.origin[2] = spawn_origin[2]*8;
 
-	client->ps.fov = atoi(Info_ValueForKey(client->pers.userinfo, "fov"));
+	client->ps.fov = 90;
 	if (client->ps.fov < 1)
 		client->ps.fov = 90;
 	else if (client->ps.fov > 160)
@@ -125,8 +125,6 @@ to be placed into the game.  This will happen every level load.
 */
 void ClientBegin (edict_t *ent)
 {
-	int		i;
-
 	ent->client = game.clients + (ent - g_edicts - 1);
 
 	// a spawn point will completely reinitialize the entity
@@ -152,26 +150,6 @@ The game can override any of the settings in place
 */
 void ClientUserinfoChanged (edict_t *ent, char *userinfo)
 {
-	char	*s;
-	int		playernum;
-
-	// set name
-	s = Info_ValueForKey (userinfo, "name");
-	strncpy (ent->client->pers.netname, s, sizeof(ent->client->pers.netname)-1);
-
-	// set skin
-	s = Info_ValueForKey (userinfo, "skin");
-
-	playernum = ent-g_edicts-1;
-
-	// combine name and skin into a configstring
-	gi.configstring (CS_PLAYERSKINS+playernum, va("%s\\%s", ent->client->pers.netname, s) );
-
-	ent->client->ps.fov = atoi(Info_ValueForKey(userinfo, "fov"));
-	if (ent->client->ps.fov < 1)
-		ent->client->ps.fov = 90;
-	else if (ent->client->ps.fov > 160)
-		ent->client->ps.fov = 160;
 }
 
 
@@ -191,13 +169,6 @@ qboolean ClientConnect (edict_t *ent, char *userinfo)
 {
 	// they can connect
 	ent->client = game.clients + (ent - g_edicts - 1);
-
-	ClientUserinfoChanged (ent, userinfo);
-
-	if (game.maxclients > 1)
-		gi.dprintf ("%s connected\n", ent->client->pers.netname);
-
-	ent->client->pers.connected = true;
 	return true;
 }
 
@@ -216,8 +187,6 @@ void ClientDisconnect (edict_t *ent)
 	if (!ent->client)
 		return;
 
-	gi.bprintf (PRINT_HIGH, "%s disconnected\n", ent->client->pers.netname);
-
 	// send effect
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -229,7 +198,6 @@ void ClientDisconnect (edict_t *ent)
 	ent->solid = SOLID_NOT;
 	ent->inuse = false;
 	ent->classname = "disconnected";
-	ent->client->pers.connected = false;
 
 	playernum = ent-g_edicts-1;
 	gi.configstring (CS_PLAYERSKINS+playernum, "");
@@ -316,8 +284,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	client->buttons = ucmd->buttons;
 	client->latched_buttons |= client->buttons & ~client->oldbuttons;
 
-	// save light level the player is standing on for
-	// monster sighting AI
+	// save light level the player is standing on
 	ent->light_level = ucmd->lightlevel;
 }
 

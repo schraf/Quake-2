@@ -20,9 +20,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #include "g_local.h"
 
-static	edict_t		*current_player;
-static	gclient_t	*current_client;
-
 static	vec3_t	forward, right, up;
 float	xyspeed;
 
@@ -147,9 +144,6 @@ void ClientEndServerFrame (edict_t *ent)
 {
 	int		i;
 
-	current_player = ent;
-	current_client = ent->client;
-
 	//
 	// If the origin or velocity have changed since ClientThink(),
 	// update the pmove values.  This will happen when the client
@@ -160,8 +154,8 @@ void ClientEndServerFrame (edict_t *ent)
 	//
 	for (i=0 ; i<3 ; i++)
 	{
-		current_client->ps.pmove.origin[i] = ent->s.origin[i]*8.0;
-		current_client->ps.pmove.velocity[i] = ent->velocity[i]*8.0;
+		ent->client->ps.pmove.origin[i] = ent->s.origin[i]*8.0;
+		ent->client->ps.pmove.velocity[i] = ent->velocity[i]*8.0;
 	}
 
 	AngleVectors (ent->client->v_angle, forward, right, up);
