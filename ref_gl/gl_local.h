@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -25,15 +25,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #pragma warning(disable : 4051)     // ALPHA
 #endif
 
-#ifdef _WIN32
-#  include <windows.h>
-#endif
-
 #include <stdio.h>
-
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <math.h>
+#include "SDL_opengl.h"
 
 #ifndef GL_COLOR_INDEX8_EXT
 #define GL_COLOR_INDEX8_EXT GL_COLOR_INDEX
@@ -76,7 +70,7 @@ extern	viddef_t	vid;
 
 */
 
-typedef enum 
+typedef enum
 {
 	it_skin,
 	it_sprite,
